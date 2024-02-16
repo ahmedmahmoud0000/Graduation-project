@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="autonomous_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+     <xacro:include filename="$(find autonomous_description)/urdf/autonomous.gazebo"/>
+
+  <link name="robot_footprint">
+     </link>
+    
+      <joint name="robot_footprint_joint" type="fixed">
+        <parent link="robot_footprint"/>
+        <child link="base_link"/>
+     </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin
+        xyz="0.070643 1.3052E-06 0.41041"
+        rpy="0 0 0" />
+      <mass
+        value="3.9259" />
+      <inertia
+        ixx="0.52196"
+        ixy="-8.6708E-07"
+        ixz="-0.018081"
+        iyy="0.47673"
+        iyz="-4.7129E-07"
+        izz="0.56044" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="right_wheel">
+    <inertial>
+      <origin
+        xyz="0.000849211644423475 8.44427452529883E-05 -0.00581677454473639"
+        rpy="0 0 0" />
+      <mass
+        value="0.0419257722057724" />
+      <inertia
+        ixx="1.84079315534531E-05"
+        ixy="3.18478335582777E-09"
+        ixz="4.29928342206566E-10"
+        iyy="1.83735279818833E-05"
+        iyz="3.19805573729874E-11"
+        izz="3.09191078330396E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/right_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/right_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.037421 -0.21271 -0.031496"
+      rpy="1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_wheel" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="left_wheel">
+    <inertial>
+      <origin
+        xyz="0.000532019623028374 0.000667268016372846 0.00581677461199293"
+        rpy="0 0 0" />
+      <mass
+        value="0.0419257713924698" />
+      <inertia
+        ixx="1.83865755819069E-05"
+        ixy="1.69937308097638E-08"
+        ixz="-2.60285881766015E-10"
+        iyy="1.83948838562124E-05"
+        iyz="-3.43624236291918E-10"
+        izz="3.09191078313172E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/left_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/left_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.037421 0.21271 -0.031496"
+      rpy="1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="front_caster">
+    <inertial>
+      <origin
+        xyz="0.364920614471431 -3.61791744896145E-08 -0.0292926152653551"
+        rpy="0 0 0" />
+      <mass
+        value="0.0449095584767048" />
+      <inertia
+        ixx="1.04864711760672E-05"
+        ixy="-4.58158519557603E-12"
+        ixz="-3.31997115756724E-11"
+        iyy="1.24673228843484E-05"
+        iyz="1.36889444439375E-10"
+        izz="7.05461418060001E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/front_caster.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/front_caster.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="front_caster_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="front_caster" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="back_caster">
+    <inertial>
+      <origin
+        xyz="-0.290079385191494 -3.62088120597903E-08 -0.0292926149076425"
+        rpy="0 0 0" />
+      <mass
+        value="0.0449095564631206" />
+      <inertia
+        ixx="1.04864709389871E-05"
+        ixy="-4.58487662203697E-12"
+        ixz="-3.29876795181964E-11"
+        iyy="1.24673223451952E-05"
+        iyz="1.36916699361049E-10"
+        izz="7.05461385654605E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/back_caster.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/back_caster.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="back_caster_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="back_caster" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <link
+    name="lidar_Link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/lidar_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://autonomous_description/meshes/lidar_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lidar_Link_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="lidar_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
