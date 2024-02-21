@@ -14,7 +14,7 @@
         <rightJoint>right_wheel_joint</rightJoint>
 
         <!-- The distance from the center of one wheel to the other, in meters, defaults to 0.34 m -->
-        <wheelSeparation>0.0.38</wheelSeparation>
+        <wheelSeparation>0.71</wheelSeparation>
 
         <!-- Diameter of the wheels, in meters, defaults to 0.15 m -->
         <wheelDiameter>0.65</wheelDiameter>
@@ -101,7 +101,7 @@
 	</gazebo>
 
     <gazebo reference="front_caster">
-        <kp value="10000000.0"/>
+        <kp value="10000.0"/>
         <kd value="1.0"/>
         <mu1>0.3</mu1>
         <mu2>0.3</mu2>
@@ -109,7 +109,7 @@
 	</gazebo> 
        
     <gazebo reference="back_caster">
-        <kp value="10000000.0"/>
+        <kp value="10000.0"/>
         <kd value="1.0"/>
         <mu1>0.3</mu1>
         <mu2>0.3</mu2>
