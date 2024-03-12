@@ -300,6 +300,9 @@
       </geometry>
     </collision>
   </link>
+   <link name="laser">
+        
+    </link>
   <joint
     name="lidar_Link_joint"
     type="fixed">
@@ -313,6 +316,7 @@
     <axis
       xyz="0 0 0" />
   </joint>
+
 <!--   
    <link name="lidar_link">
         <inertial>
