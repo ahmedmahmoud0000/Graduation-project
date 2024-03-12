@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="auonomous_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find auonomous_description)/urdf/autonomous.gazebo"/>
+
+  <link name="robot_footprint">
+     </link>
+    
+      <joint name="robot_footprint_joint" type="fixed">
+        <parent link="robot_footprint"/>
+        <child link="base_link"/>
+     </joint> 
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.090466 -0.00029792 0.32147"
+        rpy="0 0 0" />
+      <mass
+        value="2.402" />
+      <inertia
+        ixx="0.31072"
+        ixy="3.2743E-05"
+        ixz="-0.029155"
+        iyy="0.29942"
+        iyz="4.2036E-05"
+        izz="0.31747" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="right_wheel">
+    <inertial>
+      <origin
+        xyz="0.00084921 8.4443E-05 -0.0058168"
+        rpy="0 0 0" />
+      <mass
+        value="0.041926" />
+      <inertia
+        ixx="1.8408E-05"
+        ixy="3.1848E-09"
+        ixz="4.2993E-10"
+        iyy="1.8374E-05"
+        iyz="3.198E-11"
+        izz="3.0919E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/right_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/right_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.0400599889553063 -0.21271 -0.0314956241897666"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="left_wheel">
+    <inertial>
+      <origin
+        xyz="0.00053202 0.00066727 0.0058168"
+        rpy="0 0 0" />
+      <mass
+        value="0.041926" />
+      <inertia
+        ixx="1.8387E-05"
+        ixy="1.6994E-08"
+        ixz="-2.6029E-10"
+        iyy="1.8395E-05"
+        iyz="-3.4362E-10"
+        izz="3.0919E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/left_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/left_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.0400599889553063 0.21271 -0.0314956241897668"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="front_caster">
+    <inertial>
+      <origin
+        xyz="-0.00213751528649231 -0.00328128668976557 0.0288917131404438"
+        rpy="0 0 0" />
+      <mass
+        value="0.0471373025479551" />
+      <inertia
+        ixx="1.19309041827028E-05"
+        ixy="-1.56109532632465E-11"
+        ixz="5.36632360255611E-11"
+        iyy="1.39116962020014E-05"
+        iyz="9.7736821352451E-11"
+        izz="7.06512568681493E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/front_caster.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/front_caster.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="front_caster_joint"
+    type="fixed">
+    <origin
+      xyz="0.373775802962375 0.00328135075652725 -0.0574673313660244"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="front_caster" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="back_caster">
+    <inertial>
+      <origin
+        xyz="-0.00029439 -0.0032814 0.028892"
+        rpy="0 0 0" />
+      <mass
+        value="0.047137" />
+      <inertia
+        ixx="1.1931E-05"
+        ixy="1.9494E-12"
+        ixz="-5.7646E-13"
+        iyy="1.3912E-05"
+        iyz="2.2648E-10"
+        izz="7.0651E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/back_caster.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/back_caster.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="back_caster_joint"
+    type="fixed">
+    <origin
+      xyz="-0.291224197037628 0.00328135075652652 -0.0574673313660244"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="back_caster" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <link
+    name="lidar_Link">
+    <inertial>
+      <origin
+        xyz="-0.00060821 0.0057755 -0.019562"
+        rpy="0 0 0" />
+      <mass
+        value="0.14299" />
+      <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/lidar_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auonomous_description/meshes/lidar_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lidar_Link_joint"
+    type="fixed">
+    <origin
+      xyz="0.0332911368587601 -0.025355271833562 0.9566"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="lidar_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+<!--   
+   <link name="lidar_link">
+        <inertial>
+            <origin xyz="0.00060821 0.0057755 -0.019562" rpy="0.0 0.0 0.0"/>
+            <mass value="0.1"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+        <visual name="lidar_link_visual">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="package://auonomous_description/meshes/lidar_link.STL"/>
+            </geometry>
+            <material name="">
+                <color rgba="1.0 0.0 0.0 1.0"/>
+                <texture filename=""/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <box size="0.1 0.1 0.1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="lidar_joint" type="fixed">
+       <origin
+      xyz="0.0332911368587601 -0.025355271833562 0.9566"
+      rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="lidar_link"/>
+    </joint>
+
+
+    <link name="laser_data_link">
+        
+    </link>
+
+    <joint name="laser_data_joint" type="fixed">
+        <origin xyz="0.0332911368587601 -0.025355271833562 0.9566" rpy="0.0 -1.5708 -1.5708"/>
+        <parent link="lidar_link"/>
+        <child link="laser_data_link"/>
+    </joint> -->
+  
+</robot>
