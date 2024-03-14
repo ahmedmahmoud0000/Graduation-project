@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project(autonomous_description)
+project(auonomous_description)
 
 find_package(catkin REQUIRED)
 

@@ -11,7 +11,7 @@
   <arg name="yaw" default="0"/>
 
   <!-- Launch other relevant files-->
-  <include file="$(find autonomous_description)/launch/robot_description.launch"/>
+  <include file="$(find auonomous_description)/launch/robot_description.launch"/>
 
 
 
@@ -30,7 +30,7 @@
 
 
  <!-- Find my robot Description-->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find autonomous_description)/urdf/autonomous_description.xacro'"/>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find auonomous_description)/urdf/auonomous_description.xacro'"/>
 
   <!-- Spawn My Robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" 

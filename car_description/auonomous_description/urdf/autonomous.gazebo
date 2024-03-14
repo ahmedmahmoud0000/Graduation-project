@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<autonomous_description>
+<auonomous_description>
 
     <gazebo>
     <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
@@ -17,7 +17,7 @@
         <wheelSeparation>0.71</wheelSeparation>
 
         <!-- Diameter of the wheels, in meters, defaults to 0.15 m -->
-        <wheelDiameter>0.65</wheelDiameter>
+        <wheelDiameter>0.065</wheelDiameter>
 
         <!-- Wheel acceleration, in rad/s^2, defaults to 0.0 rad/s^2 -->
         <wheelAcceleration>1.0</wheelAcceleration>
@@ -55,7 +55,7 @@
     </gazebo>
 
 
-      <gazebo reference="laser_data_link">
+      <gazebo reference="lidar_Link">
 		<sensor type="ray" name="rplidar">
 			<pose>0 0 0 0 0 0</pose>
 			<visualize>true</visualize>
@@ -83,7 +83,7 @@
 			</ray>
 			<plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
 				<topicName>/scan</topicName>
-				<frameName>laser_data_link</frameName>
+				<frameName>lidar_Link</frameName>
 			</plugin>
 		</sensor>
 	</gazebo>
@@ -101,7 +101,7 @@
 	</gazebo>
 
     <gazebo reference="front_caster">
-        <kp value="10000.0"/>
+        <kp value="10590.0"/>
         <kd value="1.0"/>
         <mu1>0.3</mu1>
         <mu2>0.3</mu2>
@@ -109,7 +109,7 @@
 	</gazebo> 
        
     <gazebo reference="back_caster">
-        <kp value="10000.0"/>
+        <kp value="10590.0"/>
         <kd value="1.0"/>
         <mu1>0.3</mu1>
         <mu2>0.3</mu2>
@@ -135,4 +135,4 @@
       <velocityGaussianNoise>0.5 0.5 0.5</velocityGaussianNoise>
     </plugin>
   </gazebo>
-</autonomous_description>
+</auonomous_description>
