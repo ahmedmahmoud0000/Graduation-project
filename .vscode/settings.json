@@ -6,5 +6,6 @@
     "python.analysis.extraPaths": [
         "/home/meskelkhetam/Downloads/project_ws/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
+    ],
+    "cmake.sourceDirectory": "/home/mesk/Grad_ws/src/Graduation-project/car_control/differential_drive_arduino/arduino_code/liberaries/Adafruit_BusIO"
 }

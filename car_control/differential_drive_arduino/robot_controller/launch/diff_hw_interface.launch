@@ -9,13 +9,13 @@
   <node name="joint_receiver" pkg="robot_controller" type="joints_receive_from_arduino.py"/>
   <node name="IMU_publisher" pkg="robot_controller" type="imu_publisher"/>
 
-  <!-- <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false" >
+  <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false" >
     <param name="fixed_frame" value="odom" />
     <param name="use_mag" value="false" />
     <param name="use_magnetic_field_msg" value="false" />
     <param name="publish_tf" value="false"/>
     <remap from="imu/data_raw" to="imu_data"/>
- </node> -->
+ </node>
 
   <rosparam file="$(find robot_controller)/config/controllers.yaml" command="load"/>
   <rosparam file="$(find robot_controller)/config/joint_limits.yaml" command="load"/>

@@ -268,7 +268,7 @@
   </joint>
 
   <link
-    name="lidar_Link">
+    name="laser">
     <inertial>
       <origin
         xyz="0 0 0"
@@ -316,7 +316,7 @@
     <parent
       link="base_link" />
     <child
-      link="lidar_Link" />
+      link="laser" />
     <axis
       xyz="0 0 0" />
   </joint>
