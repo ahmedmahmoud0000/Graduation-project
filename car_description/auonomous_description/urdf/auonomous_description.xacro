@@ -300,9 +300,7 @@
       </geometry>
     </collision>
   </link>
-   <link name="laser">
-        
-    </link>
+
   <joint
     name="lidar_Link_joint"
     type="fixed">
