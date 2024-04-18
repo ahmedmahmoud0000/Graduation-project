@@ -205,3 +205,7 @@ include_directories(
 # catkin_add_nosetests(test)
 add_executable(lidar_scan src/lidar_node.cpp)
 target_link_libraries(lidar_scan ${catkin_LIBRARIES})
+add_executable(lidar_subscriber src/lidar_subscriber.cpp)
+target_link_libraries(lidar_subscriber ${catkin_LIBRARIES})
+add_executable(lidaaar src/lidaaar.cpp)
+target_link_libraries(lidaaar ${catkin_LIBRARIES})
