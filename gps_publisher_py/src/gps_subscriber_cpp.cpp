@@ -7,8 +7,7 @@
 
  std::string action ;
  std::string next_action ;
- int distance=0 ;
- int feedback= 0;
+ float feedback= 0;
  std::vector<std::string> action_data_array;
  std::vector<std::int32_t> distance_data_array;
  int counter = 0;
@@ -38,11 +37,44 @@ void distanceCallback(const std_msgs::Int32::ConstPtr& msg) {
 
 void lidarCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
 {
+
  range_front = scan_msg->ranges[360];
  range_behind = scan_msg->ranges[900];
  range_right = scan_msg->ranges[0];
  range_left = scan_msg->ranges[630];
  std::cout<<range_front<<"         "<<range_behind<<"         "<<range_right<<"         "<<range_left<< std::endl; 
+
+}
+
+int avoidance_func (const sensor_msgs::LaserScan::ConstPtr& scan_msg)
+{
+  float sum_right = 0 ;
+  for( int i=0 ; i<360 ; i++)
+  {
+
+    sum_right = sum_right + scan_msg->ranges[i];
+    
+  }
+  float STD_right = sum_right /296 ;
+  
+    float sum_left = 0 ;
+  for( int i=361 ; i< 630 ; i++)
+  {
+
+    sum_left = sum_left + scan_msg->ranges[i];
+  
+  }
+
+  float STD_left = sum_left /269 ;
+
+  if (STD_right >= STD_left)          //      ممكن نبقي نقلل هنا السرعه 
+  {
+    return 1  ;    // 1 = turn right 
+  }
+  else return 0 ;  // 0 = turn left 
+
+  
+
 
 }
 
@@ -65,11 +97,43 @@ int main(int argc, char **argv) {
     loop_rate.sleep();
    
 
-    // for (int32_t i = 0; i <= array_length_action ; i++)
-    // {
-    //   ROS_INFO("Action: %s (added to array)", action_data_array[1]);  
+    for (int i = 0; i <= array_length_action ; i++)
+    {
+      std::string goal_action = action_data_array[i];
+      float goal_distance = distance_data_array[i];
+      std::string next_action = action_data_array[i++];
+      feedback = goal_distance;
+
+      while (feedback)
+      {
+      //  MOVE WITH ACTION & DISTANCE
+			// GET MOVED DISTACE FROM ROTARY ENCODER AND SUBSTRACT IT FROM FEEDBACK
+
+      if (range_front <= 1)
+      {
+        int direction_avoidance = avoidance_func();   //make avoidance function
+        if (direction_avoidance == 0)
+        {
+          avoid_left      //make avoid_left  function
+        }
+        else if ( direction_avoidance == 1 )
+        {
+          avoid_right     // make avoid_right function
+        }
+
+
+
+
+      }
+      }
+      
+
+ 
+      ROS_INFO("Action: %s number : %d (added to array)",goal_action.c_str() , i);  
     
-    // }
+
+
+    }
     
 
 
@@ -83,13 +147,6 @@ int main(int argc, char **argv) {
 
 
   } 
-  
-  
-  // for ( int i=0 ; i<=3 ; i++)
-  // {
-  //   action = 
-
-  // }
 
   return 0;
 }
