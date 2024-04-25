@@ -1,6 +1,8 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int32.h>
+#include <sensor_msgs/LaserScan.h>
+#include <std_msgs/Float32.h>
 #include <vector>
 
  std::string action ;
@@ -12,6 +14,11 @@
  int counter = 0;
  int array_length_action=0;
  int array_length_distance =0;
+
+  _Float32 range_front = 0 ;
+  _Float32 range_behind = 0 ;
+  _Float32 range_right = 0 ;
+  _Float32 range_left = 0 ;
 
 void actionCallback(const std_msgs::String::ConstPtr& msg) {
     std::string action_data_str(msg->data.c_str());
@@ -29,11 +36,23 @@ void distanceCallback(const std_msgs::Int32::ConstPtr& msg) {
     ROS_INFO("Action data array has %d elements", array_length_distance);
 }
 
+void lidarCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
+{
+ range_front = scan_msg->ranges[360];
+ range_behind = scan_msg->ranges[900];
+ range_right = scan_msg->ranges[0];
+ range_left = scan_msg->ranges[630];
+ std::cout<<range_front<<"         "<<range_behind<<"         "<<range_right<<"         "<<range_left<< std::endl; 
+
+}
+
+
 int main(int argc, char **argv) {
   ros::init(argc, argv, "gps_subscriber_cpp");
   ros::NodeHandle nh;
   ros::Subscriber sub_action = nh.subscribe("gps_action", 10, actionCallback);
   ros::Subscriber sub_distance = nh.subscribe("gps_distance", 10, distanceCallback);
+  ros::Subscriber sub = nh.subscribe("scan", 1000, lidarCallback);
   
 
 
