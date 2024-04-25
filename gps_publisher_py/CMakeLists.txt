@@ -208,6 +208,6 @@ ${catkin_INCLUDE_DIRS}
 
 ## Add folders to be run by python nosetests
 
-# add_executable(gps_publisher scripts/gps_publisher_node.py)  # Treat Python file as executable
+add_executable(gps_sucscriber src/gps_subscriber_cpp.cpp)  # Treat Python file as executable
 
-# target_link_libraries(gps_publisher ${python_LIBRARIES})  # Link with Python libraries
+target_link_libraries(gps_sucscriber ${catkin_LIBRARIES})  # Link with Python libraries

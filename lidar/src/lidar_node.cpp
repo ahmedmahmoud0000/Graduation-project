@@ -2,10 +2,10 @@
 #include <sensor_msgs/LaserScan.h>
 #include <std_msgs/Float32.h>
 
-float range_front = 0 ;
-float range_behind = 0 ;
-float range_right = 0 ;
-float range_left = 0 ;
+_Float32 range_front = 0 ;
+_Float32 range_behind = 0 ;
+_Float32 range_right = 0 ;
+_Float32 range_left = 0 ;
 
 std_msgs::Float32 front_msg ;
 std_msgs::Float32 behind_msg ;
@@ -14,22 +14,22 @@ std_msgs::Float32 left_msg ;
 
 void chatterCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
 {
- range_front = scan_msg->ranges[0];
+ range_front = scan_msg->ranges[360];
 }
 
 void chatter_behindCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
 {
- range_behind = scan_msg->ranges[180];
+ range_behind = scan_msg->ranges[900];
 }
 
 void chatter_rightCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
 {
- range_right = scan_msg->ranges[90];
+ range_right = scan_msg->ranges[0];
 }
 
 void chatter_leftCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
 {
- range_left = scan_msg->ranges[270];
+ range_left = scan_msg->ranges[630];
 }
 
 int main(int argc, char **argv)
