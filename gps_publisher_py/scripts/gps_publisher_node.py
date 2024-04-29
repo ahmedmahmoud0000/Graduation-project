@@ -73,6 +73,7 @@ def gps_publisher():
 		     continue 
 	    pub_action.publish(head[w])
 	    pub_distance.publish(i)
+    pub_action.publish("done")
 	
   
     rate.sleep()
