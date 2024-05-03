@@ -25,9 +25,9 @@ unsigned long lastInterruptTimeR = 0;  // variable to store the time of the last
 unsigned long lastInterruptTimeL = 0;  // variable to store the time of the last interrupt
 
 
-float count_per_rev_lm = 510.0;// <======== set this number according to your motor (count per rev) for left motor
+float count_per_rev_lm = 507;// <======== set this number according to your motor (count per rev) for left motor 510.0
 
-float count_per_rev_rm = 468.5;// <======== set this number according to your motor (count per rev) for right motor
+float count_per_rev_rm = 507;// <======== set this number according to your motor (count per rev) for right motor 468.5
 
 unsigned long lastTime, now;
 
@@ -70,7 +70,7 @@ void setup() {
   RMPID.SetOutputLimits(-255, 255);
   ros_setup();
 
-  //  Serial.begin (57600);
+    Serial.begin (57600);
 
 }
 
@@ -96,10 +96,10 @@ void loop() {
   if ((millis() - prev_control_time) >= (1000 / COMMAND_RATE))
   {
 
-    LM_pose_cahnge = (360.0 * (LM_encoderPos - LM_lastpos)) / count_per_rev_lm; //change in position in degrees of the wheel
+    LM_pose_cahnge = ((LM_encoderPos - LM_lastpos)) / count_per_rev_lm; //change in position in degrees of the wheel 360.0 * 
     LM_input = (360.0 * 1000 * (LM_encoderPos - LM_last_pos)) / (count_per_rev_lm * (now - lastTime));
 
-    RM_pose_cahnge = (360.0 * (RM_encoderPos - RM_lastpos)) / count_per_rev_rm; //change in position in degrees of the wheel
+    RM_pose_cahnge = ( (RM_encoderPos - RM_lastpos)) / count_per_rev_rm; //change in position in degrees of the wheel 360.0 * 
     RM_input = (360.0 * 1000 * (RM_encoderPos - RM_last_pos)) / (count_per_rev_rm * (now - lastTime));
     joint_state.data_length = 2;
     joint_state.data[0] = LM_pose_cahnge;
@@ -176,12 +176,11 @@ void readEncoder_right() {
 
     if (b > 0) {
       posi_rm ++;
-
+Serial.println(posi_rm);
     }
     else {
       posi_rm --;
 
     }
    
- 
 }

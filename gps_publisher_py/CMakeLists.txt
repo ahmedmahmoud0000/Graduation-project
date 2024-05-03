@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  rospy_tutorials
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -208,6 +209,10 @@ ${catkin_INCLUDE_DIRS}
 
 ## Add folders to be run by python nosetests
 
+add_executable(control_pub src/control.cpp)  # Treat Python file as executable
 add_executable(gps_sucscriber src/gps_subscriber_cpp.cpp)  # Treat Python file as executable
+add_executable(encoder_sub src/encoder_sub.cpp)  # Treat Python file as executable
 
 target_link_libraries(gps_sucscriber ${catkin_LIBRARIES})  # Link with Python libraries
+target_link_libraries(control_pub ${catkin_LIBRARIES})  # Link with Python libraries
+target_link_libraries(encoder_sub ${catkin_LIBRARIES})  # Link with Python libraries
