@@ -5,6 +5,7 @@ rospy_tutorials::Floats joint_state;
 
 void jointStateCallback(const rospy_tutorials::FloatsConstPtr& msg) {
   ROS_INFO("Received joint states:");
+  
 
 
 }
