@@ -96,10 +96,10 @@ void loop() {
   if ((millis() - prev_control_time) >= (1000 / COMMAND_RATE))
   {
 
-    LM_pose_cahnge = ((LM_encoderPos - LM_lastpos)) / count_per_rev_lm; //change in position in degrees of the wheel 360.0 * 
+    LM_pose_cahnge = ((LM_encoderPos - LM_last_pos)) / count_per_rev_lm; //change in position in degrees of the wheel 360.0 * LM_lastpos
     LM_input = (360.0 * 1000 * (LM_encoderPos - LM_last_pos)) / (count_per_rev_lm * (now - lastTime));
 
-    RM_pose_cahnge = ( (RM_encoderPos - RM_lastpos)) / count_per_rev_rm; //change in position in degrees of the wheel 360.0 * 
+    RM_pose_cahnge = ( (RM_encoderPos - RM_last_pos)) / count_per_rev_rm; //change in position in degrees of the wheel 360.0 * RM_lastpos
     RM_input = (360.0 * 1000 * (RM_encoderPos - RM_last_pos)) / (count_per_rev_rm * (now - lastTime));
     joint_state.data_length = 2;
     joint_state.data[0] = LM_pose_cahnge;

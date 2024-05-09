@@ -29,10 +29,14 @@
  float STD_avoid_right;
  float STD_avoid_left;
  uint64_t feedback=0;
- double right_feedback=20;
- double left_feedback=20;
+ double right_feedback=21;
+ double left_feedback=21;
  double old_left_encoder =0 ;
  double old_right_encoder =0 ;
+
+
+
+ int i=0;
 
   // _Float32 range_behind = 0 ;
   // _Float32 range_right = 0 ;
@@ -46,6 +50,8 @@ void actionCallback(const std_msgs::String::ConstPtr& msg) {
     array_length_action++;}
     else{
       data_recived=1;
+      goal_action = action_data_array[i];
+      feedback = distance_data_array[i]*1000;
     }
     //action_data_array.push_back(action_data_str);  // Add message to the array
     // ROS_INFO("Action: %s (added to array)", action_data_str.c_str());
@@ -163,27 +169,33 @@ void avoid_right ()
 }
 
 void jointStateCallback(const rospy_tutorials::FloatsConstPtr& msg) {
-  ROS_INFO("Received joint states:");
+  //ROS_INFO("Received joint states:");
 
 
   double current_left_encoder = msg->data[0];
   double current_right_encoder  = msg->data[1];
-  double buff_right = (current_right_encoder-old_right_encoder)*65 ;
-  double buff_left =(current_left_encoder-old_right_encoder)*65;
+  // double buff_right = (current_right_encoder-old_right_encoder)*65 ;
+  // double buff_left =(current_left_encoder-old_right_encoder)*65;
+ current_right_encoder  *= 65;
+ current_left_encoder *=65;
   old_left_encoder=current_left_encoder;
   old_right_encoder=current_right_encoder;
+  ROS_INFO_STREAM("buff_right= "<<"  " <<current_right_encoder<<"buff_left =  "<<current_left_encoder);
+    int counter =0;
 
   if (goal_action=="straight")
   {
-    if (feedback>=buff_left)
+    if (feedback>=current_left_encoder)
     {
-      feedback-=buff_left;
+      feedback-=current_right_encoder;
     }
     else feedback=0;
   }
-  else if (goal_action == "turn right") right_feedback += buff_right;
-  else if (goal_action == "turn left") left_feedback += buff_left;
+  else if (goal_action == "turn-right") right_feedback += current_right_encoder;
+  else if (goal_action == "turn-left") left_feedback += current_left_encoder;
+    ROS_INFO_STREAM("counter= "<<"  " <<counter);
 
+ counter++;
 }
 
 
@@ -200,12 +212,10 @@ int main(int argc, char **argv) {
   ros::Subscriber joint_state = nh.subscribe("joint_states_from_arduino", 10, jointStateCallback);
   
   ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
-
-
   while (ros::ok()) {
     
     geometry_msgs::Twist msg;
-    ROS_INFO("main is running...");
+    ///ROS_INFO("main is running...");
     // std::cout<<"length_action: "<<array_length_action<<std::endl;
     // std::cout<<"length_distance: "<<array_length_distance<<std::endl;
     ros::spinOnce(); // Check for new messages and call callbacks
@@ -213,13 +223,13 @@ int main(int argc, char **argv) {
    
    if(data_recived==1){
 
-   for (int i = 0; i <= array_length_action ; i++)
-    {
+   //for ( i = 0; i <= array_length_action ; )
+    //{
     
       ROS_INFO("Goal %d started ", i);
       
-      goal_action = action_data_array[i];
-      feedback = distance_data_array[i]*1000;
+
+      ROS_INFO("ddis %d",distance_data_array[i]);
       if(i<= array_length_action )
       {
         int d=i;
@@ -237,19 +247,20 @@ int main(int argc, char **argv) {
    
       // }
 
-      if (goal_action == "turn right") 
+      if (goal_action == "turn-right") 
       {
         right_feedback = 0 ;
      
       }
 
-      else if (goal_action == "turn left")
+      else if (goal_action == "turn-left")
       {
         left_feedback = 0 ;
          
       }
+if(right_feedback<20)
 
-    while (right_feedback < 20)
+   // while (right_feedback < 20)
           {
             msg.linear.x = 0;
             msg.linear.y = 0;
@@ -286,8 +297,11 @@ int main(int argc, char **argv) {
           //       ROS_INFO("Turning Right ");
           //       feedback = 0 ; 
           //     }
+               pub.publish(msg);
+
           }
-         while (left_feedback < 20)
+          if (left_feedback<20)
+        /// while (left_feedback < 20)
           {
             msg.linear.x = 0;
             msg.linear.y = 0;
@@ -324,9 +338,14 @@ int main(int argc, char **argv) {
           //       ROS_INFO("Turning Right ");
           //       // Turn right 90 degree 
           //     }
+           pub.publish(msg);
           } 
-    while (feedback)
+          if ((feedback>0)&&(right_feedback>20) && (left_feedback>20))
+    //while (feedback)
       {
+        ros::spinOnce();
+        ROS_INFO_STREAM(feedback);
+        
         msg.linear.x = 20;
         msg.linear.y = 0;
         msg.linear.z = 0;
@@ -362,20 +381,32 @@ int main(int argc, char **argv) {
       //       ROS_INFO("Turning Right ");
       //       // Turn right 90 degree 
       //     }
+          pub.publish(msg);
+
       }   
         
         
           
              
-      }
+    //}
           
     }
-     std::string next_action = "none";
-     data_recived=0;
-    
-    pub.publish(msg);
+    if((feedback==0)&&(data_recived==1)){
+
+    if(i<array_length_action){
+    if(i>0){
+    i++;}
+      goal_action = action_data_array[i];
+      feedback = distance_data_array[i]*1000;
+    }
+    else{
+         std::string next_action = "none";
+    data_recived=0;
+    }
+
+    }
     loop_rate.sleep();
-    break;
+    // break;
 
   }
   return 0;

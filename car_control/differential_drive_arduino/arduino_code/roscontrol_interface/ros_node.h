@@ -23,7 +23,6 @@ ros::Publisher raw_imu_pub("imu_raw", &raw_imu_msg);
 void ros_setup(){
   nh.initNode();
   
-
   nh.subscribe(sub);
   nh.advertise(pub);
   nh.advertise(raw_imu_pub);
