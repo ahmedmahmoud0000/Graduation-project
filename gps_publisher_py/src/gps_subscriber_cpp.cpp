@@ -6,6 +6,7 @@
 #include <vector>
 #include <geometry_msgs/Twist.h>
 #include<rospy_tutorials/Floats.h>
+   #include<unistd.h>
 
  rospy_tutorials::Floats joint_state;
 
@@ -21,6 +22,9 @@
  int array_length_action=0;
  int array_length_distance =0;
  int data_recived=0;
+int flag_i=0;
+int flag_turn=0;
+int stop_flag=0;
 
  float STD_range_front ;
  float STD_range_behind;
@@ -28,7 +32,8 @@
  float STD_range_left;
  float STD_avoid_right;
  float STD_avoid_left;
- uint64_t feedback=0;
+ long feedback=0;
+ int turn_limit=20;
  double right_feedback=21;
  double left_feedback=21;
  double old_left_encoder =0 ;
@@ -50,8 +55,8 @@ void actionCallback(const std_msgs::String::ConstPtr& msg) {
     array_length_action++;}
     else{
       data_recived=1;
-      goal_action = action_data_array[i];
-      feedback = distance_data_array[i]*1000;
+      // goal_action = action_data_array[i];
+      // feedback = distance_data_array[i]*1000;
     }
     //action_data_array.push_back(action_data_str);  // Add message to the array
     // ROS_INFO("Action: %s (added to array)", action_data_str.c_str());
@@ -81,7 +86,13 @@ void lidarCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
     
   }
     STD_range_front = sum_range_front /360 ;
-  
+  if(STD_range_front>100){
+
+    stop_flag=0;
+  }
+  else{
+    stop_flag=1;
+  }
 //  range_behind = scan_msg->ranges[900];
   float sum_range_behind = 0 ;
   for( int i=720 ; i<1080 ; i++)
@@ -172,28 +183,56 @@ void jointStateCallback(const rospy_tutorials::FloatsConstPtr& msg) {
   //ROS_INFO("Received joint states:");
 
 
-  double current_left_encoder = msg->data[0];
-  double current_right_encoder  = msg->data[1];
+  double current_left_encoder = msg->data[1];
+  double current_right_encoder  = msg->data[0];
+  if(current_right_encoder<0){
+    current_right_encoder*=-1;
+  }
+  //ROS_INFO_STREAM(current_right_encoder);
+    if(current_left_encoder<0){
+    current_left_encoder*=-1;
+  }
   // double buff_right = (current_right_encoder-old_right_encoder)*65 ;
   // double buff_left =(current_left_encoder-old_right_encoder)*65;
- current_right_encoder  *= 65;
- current_left_encoder *=65;
+ current_right_encoder  *= 1;
+ current_left_encoder *=1;
   old_left_encoder=current_left_encoder;
   old_right_encoder=current_right_encoder;
-  ROS_INFO_STREAM("buff_right= "<<"  " <<current_right_encoder<<"buff_left =  "<<current_left_encoder);
-    int counter =0;
+  // ROS_INFO_STREAM("buff_right= "<<"  " <<current_right_encoder<<"buff_left =  "<<current_left_encoder);
+    // int counter =0;
 
   if (goal_action=="straight")
   {
-    if (feedback>=current_left_encoder)
+    if (feedback>=current_right_encoder)
     {
       feedback-=current_right_encoder;
+       //ROS_INFO_STREAM(feedback);
     }
-    else feedback=0;
+    else {feedback=0;
+    ROS_INFO("nnjn");
+  ROS_INFO_STREAM(i);
+    }
+    if((feedback==0)&&(flag_i==1)){
+      i++;
+      flag_i=0;
+    }
   }
-  else if (goal_action == "turn-right") right_feedback += current_right_encoder;
-  else if (goal_action == "turn-left") left_feedback += current_left_encoder;
-    ROS_INFO_STREAM("counter= "<<"  " <<counter);
+  else if (goal_action == "turn-right") {
+    
+    right_feedback += current_right_encoder;
+        if((right_feedback>turn_limit)&&(flag_i==1)){
+      i++;
+      flag_i=0;
+    }
+  }
+  else if (goal_action == "turn-left") {
+    left_feedback += current_left_encoder;
+    if((left_feedback>turn_limit)&&(flag_i==1)){
+      i++;
+      flag_i=0;
+    }
+  }
+    // ROS_INFO_STREAM("counter= "<<"  " <<counter);
 
  counter++;
 }
@@ -213,7 +252,9 @@ int main(int argc, char **argv) {
   
   ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
   while (ros::ok()) {
-    
+
+unsigned int microsecond = 10000;
+usleep(15 * microsecond);
     geometry_msgs::Twist msg;
     ///ROS_INFO("main is running...");
     // std::cout<<"length_action: "<<array_length_action<<std::endl;
@@ -226,10 +267,10 @@ int main(int argc, char **argv) {
    //for ( i = 0; i <= array_length_action ; )
     //{
     
-      ROS_INFO("Goal %d started ", i);
+      // ROS_INFO("Goal %d started ", i);
       
 
-      ROS_INFO("ddis %d",distance_data_array[i]);
+      // ROS_INFO("ddis %d",distance_data_array[i]);
       if(i<= array_length_action )
       {
         int d=i;
@@ -247,28 +288,20 @@ int main(int argc, char **argv) {
    
       // }
 
-      if (goal_action == "turn-right") 
-      {
-        right_feedback = 0 ;
-     
-      }
 
-      else if (goal_action == "turn-left")
-      {
-        left_feedback = 0 ;
-         
-      }
-if(right_feedback<20)
+    if(right_feedback<turn_limit)
 
    // while (right_feedback < 20)
           {
-            msg.linear.x = 0;
+            ROS_INFO_STREAM(right_feedback);
+             //ROS_INFO_STREAM(goal_action);
+            msg.linear.x = 8;
             msg.linear.y = 0;
             msg.linear.z = 0;
 
             msg.angular.x = 0;
             msg.angular.y = 0;
-            msg.angular.z = 20;
+            msg.angular.z = -1000;
 
             //   if (STD_range_front <= 1)
             //   {
@@ -300,16 +333,23 @@ if(right_feedback<20)
                pub.publish(msg);
 
           }
-          if (left_feedback<20)
+          else if((left_feedback>=turn_limit)&&(right_feedback>=turn_limit)&&(flag_turn==1)){
+            flag_turn=0;
+            goal_action="straight";
+            ROS_INFO_STREAM("edit here");
+          }
+          if (left_feedback<turn_limit)
         /// while (left_feedback < 20)
           {
-            msg.linear.x = 0;
+            ROS_INFO_STREAM(left_feedback);
+             ROS_INFO_STREAM(goal_action);
+            msg.linear.x = 15;
             msg.linear.y = 0;
             msg.linear.z = 0;
 
             msg.angular.x = 0;
             msg.angular.y = 0;
-            msg.angular.z = -20;
+            msg.angular.z = 1000;
 
           //   if (STD_range_front <= 1)
           //   {
@@ -340,19 +380,33 @@ if(right_feedback<20)
           //     }
            pub.publish(msg);
           } 
-          if ((feedback>0)&&(right_feedback>20) && (left_feedback>20))
+                    else if((left_feedback>=turn_limit)&&(right_feedback>=turn_limit)&&(flag_turn==1)){
+            flag_turn=0;
+            goal_action="straight";
+            ROS_INFO_STREAM("or here");
+          }
+          if ((feedback>0)&&(right_feedback>turn_limit) && (left_feedback>turn_limit))
     //while (feedback)
       {
-        ros::spinOnce();
+        // ros::spinOnce();
+
         ROS_INFO_STREAM(feedback);
-        
-        msg.linear.x = 20;
+        if (stop_flag==0){
+        msg.linear.x = 8;
         msg.linear.y = 0;
         msg.linear.z = 0;
 
         msg.angular.x = 0;
         msg.angular.y = 0;
-        msg.angular.z = 0;
+        msg.angular.z = 0;}
+        else{
+ msg.linear.x = 0;
+        msg.linear.y = 0;
+        msg.linear.z = 0;
+
+        msg.angular.x = 0;
+        msg.angular.y = 0;
+        msg.angular.z = 0;}
 
       //   if (STD_range_front <= 1)
       //   {
@@ -381,6 +435,7 @@ if(right_feedback<20)
       //       ROS_INFO("Turning Right ");
       //       // Turn right 90 degree 
       //     }
+      
           pub.publish(msg);
 
       }   
@@ -391,20 +446,43 @@ if(right_feedback<20)
     //}
           
     }
-    if((feedback==0)&&(data_recived==1)){
-
+    if(feedback==0){
+    if(data_recived==1)
+    {
+      ROS_INFO_STREAM("feedback = %d"<<feedback);
+      // ROS_INFO_STREAM(feedback);
+    ROS_INFO_STREAM("we are at first if");
     if(i<array_length_action){
-    if(i>0){
-    i++;}
+    ROS_INFO_STREAM("we are at sec if");  
+   // if(i>0){
+    //   ROS_INFO_STREAM("we are at third if");
+    // i++;} 
       goal_action = action_data_array[i];
-      feedback = distance_data_array[i]*1000;
+      feedback = distance_data_array[i];//*1000;
+
+      ROS_INFO_STREAM("we came back");
+      ROS_INFO_STREAM(feedback);
+      ROS_INFO_STREAM(goal_action);
+            if (goal_action == "turn-right") 
+      {
+        ROS_INFO_STREAM("we are at third if");
+        right_feedback = 0 ;
+     flag_turn=1;
+      }
+
+      else if (goal_action == "turn-left")
+      {
+        left_feedback = 0 ;
+         flag_turn=1;
+      }
+    flag_i=1;
     }
     else{
          std::string next_action = "none";
     data_recived=0;
     }
 
-    }
+    }}
     loop_rate.sleep();
     // break;
 

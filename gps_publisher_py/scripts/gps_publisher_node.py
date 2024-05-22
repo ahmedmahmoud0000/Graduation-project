@@ -9,6 +9,7 @@ from serpapi import GoogleSearch
 
 dis=[0] * 30
 head=[0] * 30
+last = 400
 
 
 
@@ -68,11 +69,20 @@ def gps_publisher():
   while not rospy.is_shutdown():
     get_trips_data()#trips_data =
 
-    for w, i in enumerate(dis):
-	    if head[w] ==0:
-		     continue 
-	    pub_action.publish(head[w])
-	    pub_distance.publish(i)
+    #for w, i in enumerate(dis):
+	    # if head[w] ==0:
+		  #    continue
+      
+	    # pub_action.publish(head[w])
+	    # pub_distance.publish(i)
+    # pub_action.publish("turn-right")
+    # pub_distance.publish(last)
+    pub_action.publish("straight")
+    pub_distance.publish(last)
+    pub_action.publish("turn-right")
+    pub_distance.publish(last)
+    pub_action.publish("turn-left")
+    pub_distance.publish(last)
     pub_action.publish("done")
 	
   

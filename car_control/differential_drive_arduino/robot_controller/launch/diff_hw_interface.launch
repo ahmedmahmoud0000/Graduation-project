@@ -6,7 +6,7 @@
     <param name="baud" type="int" value="57600"/>
   </node>
 
-  <!-- <node name="joint_receiver" pkg="robot_controller" type="joints_receive_from_arduino.py"/> -->
+  <node name="joint_receiver" pkg="robot_controller" type="joints_receive_from_arduino.py"/>
   <node name="IMU_publisher" pkg="robot_controller" type="imu_publisher"/>
 
   <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false" >

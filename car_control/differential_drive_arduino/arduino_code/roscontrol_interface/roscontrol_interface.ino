@@ -176,7 +176,7 @@ void readEncoder_right() {
 
     if (b > 0) {
       posi_rm ++;
-Serial.println(posi_rm);
+//Serial.println(posi_rm);
     }
     else {
       posi_rm --;

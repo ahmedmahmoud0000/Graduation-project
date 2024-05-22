@@ -38,7 +38,7 @@ mobile_robot:
           max_acceleration       : 10  # m/s^2
           min_acceleration       : -10 # m/s^2
           has_jerk_limits        : true
-          max_jerk               : 5.0  # m/s^3
+          max_jerk               : 10.0  # m/s^3
       angular:
         z:
           has_velocity_limits    : true
