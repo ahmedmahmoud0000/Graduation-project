@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   rospy_tutorials
+  # serial
   # Threads
 )
 ## System dependencies are found with CMake's conventions
@@ -109,9 +110,10 @@ catkin_package(
 #  LIBRARIES gps_publisher
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+  # serial
 )
 
-catkin_install_python(PROGRAMS scripts/gps_publisher_node.py scripts/gps_subscriber_node.py
+catkin_install_python(PROGRAMS scripts/gps_publisher_node.py scripts/gps_subscriber_node.py scripts/integer_subscriber_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -123,6 +125,7 @@ catkin_install_python(PROGRAMS scripts/gps_publisher_node.py scripts/gps_subscri
 ## Your package locations should be listed before other locations
 include_directories(
 # include
+${PROJECT_SOURCE_DIR}/usr/include
 ${catkin_INCLUDE_DIRS}
 )
 
@@ -213,7 +216,10 @@ ${catkin_INCLUDE_DIRS}
 add_executable(control_pub src/control.cpp)  # Treat Python file as executable
 add_executable(gps_subscriber src/gps_subscriber_cpp.cpp)  # Treat Python file as executable
 add_executable(encoder_sub src/encoder_sub.cpp)  # Treat Python file as executable
+add_executable(integer_publisher_node src/integer_publisher_node.cpp)  # Treat Python file as executable
 
 target_link_libraries(gps_subscriber ${catkin_LIBRARIES})  # Link with Python libraries
 target_link_libraries(control_pub ${catkin_LIBRARIES})  # Link with Python libraries
 target_link_libraries(encoder_sub ${catkin_LIBRARIES})  # Link with Python libraries
+target_link_libraries(integer_publisher_node ${catkin_LIBRARIES})  # Link with Python libraries
+

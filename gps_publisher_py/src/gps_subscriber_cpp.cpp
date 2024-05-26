@@ -6,7 +6,14 @@
 #include <vector>
 #include <geometry_msgs/Twist.h>
 #include<rospy_tutorials/Floats.h>
-   #include<unistd.h>
+#include<unistd.h>
+// #include <serial/serial.h>
+#include <termios.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <libserial/SerialPort.h>
+#include <cstdlib>
+#include <fstream>
 
  rospy_tutorials::Floats joint_state;
 
@@ -240,6 +247,7 @@ void jointStateCallback(const rospy_tutorials::FloatsConstPtr& msg) {
 
 
 int main(int argc, char **argv) {
+
 
   ros::init(argc, argv, "gps_subscriber_cpp");
 

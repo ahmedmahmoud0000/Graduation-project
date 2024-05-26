@@ -53,10 +53,10 @@ PID LMPID(&LM_input, &LM_output, &LM_setpoint, LM_kp, LM_ki, LM_kd, DIRECT);
 PID RMPID(&RM_input, &RM_output, &RM_setpoint, RM_kp, RM_ki, RM_kd, DIRECT);
 
 void setup() {
-  pinMode(ENCLA, INPUT_PULLUP);
-  pinMode(ENCLB, INPUT_PULLUP);
-  pinMode(ENCRA, INPUT_PULLUP);
-  pinMode(ENCRB, INPUT_PULLUP);
+  pinMode(ENCLA, INPUT);
+  pinMode(ENCLB, INPUT);
+  pinMode(ENCRA, INPUT);
+  pinMode(ENCRB, INPUT);
 
   attachInterrupt(digitalPinToInterrupt(ENCLA), readEncoder_left, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCRA), readEncoder_right, RISING);
@@ -80,16 +80,16 @@ void loop() {
   static unsigned long prev_control_time = 0;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { // Read the position in an atomic block to avoid a potential misread if the interrupt coincides with this code running
-    unsigned long interruptTimeL = millis();  // get the current time
-    if (interruptTimeL - lastInterruptTimeL > 8) {  // check if enough time has elapsed since the last interrupt
+//    unsigned long interruptTimeL = millis();  // get the current time
+//    if (interruptTimeL - lastInterruptTimeL > 8) {  // check if enough time has elapsed since the last interrupt
       LM_encoderPos = posi_lm;
-      lastInterruptTimeL = interruptTimeL;
-    }
-    unsigned long interruptTimeR = millis();  // get the current time
-    if (interruptTimeR - lastInterruptTimeR > 8) {  // check if enough time has elapsed since the last interrupt
+//      lastInterruptTimeL = interruptTimeL;
+//    }
+//    unsigned long interruptTimeR = millis();  // get the current time
+//    if (interruptTimeR - lastInterruptTimeR > 8) {  // check if enough time has elapsed since the last interrupt
       RM_encoderPos = posi_rm;
-      lastInterruptTimeR = interruptTimeR;
-    }
+//      lastInterruptTimeR = interruptTimeR;
+//    }
   }
   now = millis();
   int timeChange = (now - lastTime);
