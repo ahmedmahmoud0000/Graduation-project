@@ -1,6 +1,7 @@
 import rospy
 from std_msgs.msg import Int8
 from std_msgs.msg import ByteMultiArray
+from std_msgs.msg import String
 import serial
 import time
 forward=bytes([0x1])
@@ -52,7 +53,9 @@ def callback(data):
         print("stop")
         received_integer=0
 
-   
+
+
+    
     # with serial.Serial('/dev/ttyUS', 9600) as ser:  # Open and automatically close port
     #     # Convert integer to bytes (if needed for your device)
     #     data_to_send = str(received_integer).encode()
@@ -64,7 +67,7 @@ def callback(data):
 def main():
     # Initialize ROS node
     # received_integer=0
-    pub = rospy.Publisher("encoder_data", ByteMultiArray, queue_size=10)
+    pub = rospy.Publisher("encoder_data", String, queue_size=10)
 
     rospy.init_node('integer_subscriber_node')
     # time.sleep(2)
@@ -83,13 +86,16 @@ def main():
       out_data=ser.readline()
       msg = ByteMultiArray()
       msg.data = out_data
-      pub.publish(msg)
+      decoded_string = out_data.decode("utf-8")
+      pub.publish(decoded_string)
+      
       # ser.close()
       print(out_data)
       rate.sleep()
 
     out_data=ser.readline()
     print(out_data)
+
    
 
 if __name__ == '__main__':

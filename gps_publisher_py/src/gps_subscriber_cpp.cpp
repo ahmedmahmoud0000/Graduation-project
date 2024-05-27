@@ -1,19 +1,16 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Int8.h>
 #include <sensor_msgs/LaserScan.h>
 #include <std_msgs/Float32.h>
 #include <vector>
 #include <geometry_msgs/Twist.h>
 #include<rospy_tutorials/Floats.h>
-#include<unistd.h>
-// #include <serial/serial.h>
-#include <termios.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <libserial/SerialPort.h>
-#include <cstdlib>
-#include <fstream>
+#include <std_msgs/ByteMultiArray.h>
+#include <sstream>
+
+
 
  rospy_tutorials::Floats joint_state;
 
@@ -24,6 +21,8 @@
  std::vector<std::int32_t> distance_data_array_vect;
  std::string action_data_array[10];
  std::int32_t distance_data_array[10];
+
+ std::string recieved_encoder_data;
 
  int counter = 0;
  int array_length_action=0;
@@ -53,6 +52,74 @@ int stop_flag=0;
   // _Float32 range_behind = 0 ;
   // _Float32 range_right = 0 ;
   // _Float32 range_left = 0 ;
+
+void encodercallback(const std_msgs::String& encoder_msg) {
+
+  recieved_encoder_data=encoder_msg.data;
+
+  std::istringstream iss(recieved_encoder_data);
+  int Left_Encoder, Right_Encoder;
+
+  if (iss >> Left_Encoder >> Right_Encoder) {
+    std::cout << "Left Encoder: " << Left_Encoder << std::endl;
+    std::cout << "Right Encoder: " << Right_Encoder << std::endl;
+  } 
+  if(Right_Encoder<0){
+  Right_Encoder*=-1;
+  }
+
+  //ROS_INFO_STREAM(current_right_encoder);
+
+    if(Left_Encoder<0){
+    Left_Encoder*=-1;
+  }
+
+  // double buff_right = (current_right_encoder-old_right_encoder)*65 ;
+  // double buff_left =(current_left_encoder-old_right_encoder)*65;
+
+  Right_Encoder  *= 1;
+  Left_Encoder *=1;
+  old_left_encoder=Left_Encoder;
+  old_right_encoder=Right_Encoder;
+
+  // ROS_INFO_STREAM("buff_right= "<<"  " <<current_right_encoder<<"buff_left =  "<<current_left_encoder);
+  // int counter =0;
+
+  if (goal_action=="straight")
+  {
+    if (feedback>=Right_Encoder)
+    {
+      feedback-=Right_Encoder;
+      //ROS_INFO_STREAM(feedback);
+    }
+    else {feedback=0;
+    ROS_INFO("nnjn");
+  ROS_INFO_STREAM(i);
+    }
+    if((feedback==0)&&(flag_i==1)){
+      i++;
+      flag_i=0;
+    }
+  }
+  else if (goal_action == "turn-right") {
+    
+    right_feedback += Right_Encoder;
+        if((right_feedback>turn_limit)&&(flag_i==1)){
+      i++;
+      flag_i=0;
+    }
+  }
+  else if (goal_action == "turn-left") {
+    left_feedback += Left_Encoder;
+    if((left_feedback>turn_limit)&&(flag_i==1)){
+      i++;
+      flag_i=0;
+    }
+  }
+  // ROS_INFO_STREAM("counter= "<<"  " <<counter);
+
+ counter++;
+}
 
 void actionCallback(const std_msgs::String::ConstPtr& msg) {
   
@@ -186,84 +253,88 @@ void avoid_right ()
   // Turn 90 degree left
 }
 
-void jointStateCallback(const rospy_tutorials::FloatsConstPtr& msg) {
-  //ROS_INFO("Received joint states:");
+// void jointStateCallback(const rospy_tutorials::FloatsConstPtr& msg) {
+//   //ROS_INFO("Received joint states:");
 
 
-  double current_left_encoder = msg->data[1];
-  double current_right_encoder  = msg->data[0];
-  if(current_right_encoder<0){
-    current_right_encoder*=-1;
-  }
-  //ROS_INFO_STREAM(current_right_encoder);
-    if(current_left_encoder<0){
-    current_left_encoder*=-1;
-  }
-  // double buff_right = (current_right_encoder-old_right_encoder)*65 ;
-  // double buff_left =(current_left_encoder-old_right_encoder)*65;
- current_right_encoder  *= 1;
- current_left_encoder *=1;
-  old_left_encoder=current_left_encoder;
-  old_right_encoder=current_right_encoder;
-  // ROS_INFO_STREAM("buff_right= "<<"  " <<current_right_encoder<<"buff_left =  "<<current_left_encoder);
-    // int counter =0;
+//   double current_left_encoder = msg->data[1];
+//   double current_right_encoder  = msg->data[0];
+//   if(current_right_encoder<0){
+//     current_right_encoder*=-1;
+//   }
+//   //ROS_INFO_STREAM(current_right_encoder);
+//     if(current_left_encoder<0){
+//     current_left_encoder*=-1;
+//   }
+//   // double buff_right = (current_right_encoder-old_right_encoder)*65 ;
+//   // double buff_left =(current_left_encoder-old_right_encoder)*65;
+//  current_right_encoder  *= 1;
+//  current_left_encoder *=1;
+//   old_left_encoder=current_left_encoder;
+//   old_right_encoder=current_right_encoder;
+//   // ROS_INFO_STREAM("buff_right= "<<"  " <<current_right_encoder<<"buff_left =  "<<current_left_encoder);
+//     // int counter =0;
 
-  if (goal_action=="straight")
-  {
-    if (feedback>=current_right_encoder)
-    {
-      feedback-=current_right_encoder;
-       //ROS_INFO_STREAM(feedback);
-    }
-    else {feedback=0;
-    ROS_INFO("nnjn");
-  ROS_INFO_STREAM(i);
-    }
-    if((feedback==0)&&(flag_i==1)){
-      i++;
-      flag_i=0;
-    }
-  }
-  else if (goal_action == "turn-right") {
+//   if (goal_action=="straight")
+//   {
+//     if (feedback>=current_right_encoder)
+//     {
+//       feedback-=current_right_encoder;
+//        //ROS_INFO_STREAM(feedback);
+//     }
+//     else {feedback=0;
+//     ROS_INFO("nnjn");
+//   ROS_INFO_STREAM(i);
+//     }
+//     if((feedback==0)&&(flag_i==1)){
+//       i++;
+//       flag_i=0;
+//     }
+//   }
+//   else if (goal_action == "turn-right") {
     
-    right_feedback += current_right_encoder;
-        if((right_feedback>turn_limit)&&(flag_i==1)){
-      i++;
-      flag_i=0;
-    }
-  }
-  else if (goal_action == "turn-left") {
-    left_feedback += current_left_encoder;
-    if((left_feedback>turn_limit)&&(flag_i==1)){
-      i++;
-      flag_i=0;
-    }
-  }
-    // ROS_INFO_STREAM("counter= "<<"  " <<counter);
+//     right_feedback += current_right_encoder;
+//         if((right_feedback>turn_limit)&&(flag_i==1)){
+//       i++;
+//       flag_i=0;
+//     }
+//   }
+//   else if (goal_action == "turn-left") {
+//     left_feedback += current_left_encoder;
+//     if((left_feedback>turn_limit)&&(flag_i==1)){
+//       i++;
+//       flag_i=0;
+//     }
+//   }
+//     // ROS_INFO_STREAM("counter= "<<"  " <<counter);
 
- counter++;
-}
+//  counter++;
+// }
 
 
 
 int main(int argc, char **argv) {
 
-
   ros::init(argc, argv, "gps_subscriber_cpp");
 
   ros::NodeHandle nh;
   
+    ros::Subscriber encoder_data = nh.subscribe("encoder_data", 10, encodercallback);
   ros::Subscriber sub_action = nh.subscribe("gps_action", 10, actionCallback);
   ros::Subscriber sub_distance = nh.subscribe("gps_distance", 10, distanceCallback);
   ros::Subscriber sub = nh.subscribe("scan", 1000, lidarCallback);
-  ros::Subscriber joint_state = nh.subscribe("joint_states_from_arduino", 10, jointStateCallback);
+  // ros::Subscriber joint_state = nh.subscribe("joint_states_from_arduino", 10, jointStateCallback);
   
-  ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
+  // ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
+
+    ros::Publisher action_pub = nh.advertise<std_msgs::Int8>("/integer_topic", 10);
+    
   while (ros::ok()) {
 
 unsigned int microsecond = 10000;
 usleep(15 * microsecond);
     geometry_msgs::Twist msg;
+        std_msgs::Int8 action_msg;
     ///ROS_INFO("main is running...");
     // std::cout<<"length_action: "<<array_length_action<<std::endl;
     // std::cout<<"length_distance: "<<array_length_distance<<std::endl;
@@ -311,6 +382,9 @@ usleep(15 * microsecond);
             msg.angular.y = 0;
             msg.angular.z = -1000;
 
+            action_msg.data=4;
+            action_pub.publish(action_msg);
+            ROS_INFO_STREAM("go LEFT");
             //   if (STD_range_front <= 1)
             //   {
             //     ROS_INFO("obstacle avoidnce started ");
@@ -338,7 +412,7 @@ usleep(15 * microsecond);
           //       ROS_INFO("Turning Right ");
           //       feedback = 0 ; 
           //     }
-               pub.publish(msg);
+              //  pub.publish(msg);
 
           }
           else if((left_feedback>=turn_limit)&&(right_feedback>=turn_limit)&&(flag_turn==1)){
@@ -358,6 +432,12 @@ usleep(15 * microsecond);
             msg.angular.x = 0;
             msg.angular.y = 0;
             msg.angular.z = 1000;
+
+            action_msg.data=3;
+            action_pub.publish(action_msg);
+            ROS_INFO_STREAM("go RIGHT");
+
+
 
           //   if (STD_range_front <= 1)
           //   {
@@ -386,7 +466,7 @@ usleep(15 * microsecond);
           //       ROS_INFO("Turning Right ");
           //       // Turn right 90 degree 
           //     }
-           pub.publish(msg);
+          //  pub.publish(msg);
           } 
                     else if((left_feedback>=turn_limit)&&(right_feedback>=turn_limit)&&(flag_turn==1)){
             flag_turn=0;
@@ -406,15 +486,29 @@ usleep(15 * microsecond);
 
         msg.angular.x = 0;
         msg.angular.y = 0;
-        msg.angular.z = 0;}
-        else{
- msg.linear.x = 0;
-        msg.linear.y = 0;
-        msg.linear.z = 0;
+        msg.angular.z = 0;
 
-        msg.angular.x = 0;
-        msg.angular.y = 0;
-        msg.angular.z = 0;}
+        action_msg.data=1;
+        action_pub.publish(action_msg);
+        ROS_INFO_STREAM("go STRAIGHT");
+
+        
+        }
+        else{
+  msg.linear.x = 0;
+          msg.linear.y = 0;
+          msg.linear.z = 0;
+
+          msg.angular.x = 0;
+          msg.angular.y = 0;
+          msg.angular.z = 0;
+
+            action_msg.data=5;
+            action_pub.publish(action_msg);
+            ROS_INFO_STREAM("STOP");
+          
+          
+        }
 
       //   if (STD_range_front <= 1)
       //   {
@@ -444,7 +538,7 @@ usleep(15 * microsecond);
       //       // Turn right 90 degree 
       //     }
       
-          pub.publish(msg);
+          // pub.publish(msg);
 
       }   
         
