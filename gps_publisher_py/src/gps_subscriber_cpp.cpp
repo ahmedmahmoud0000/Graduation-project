@@ -39,9 +39,9 @@ int stop_flag=0;
  float STD_avoid_right;
  float STD_avoid_left;
  long feedback=0;
- int turn_limit=20;
- double right_feedback=21;
- double left_feedback=21;
+ int turn_limit=100;
+ double right_feedback=turn_limit+1;
+ double left_feedback=turn_limit+1;
  double old_left_encoder =0 ;
  double old_right_encoder =0 ;
 
@@ -61,11 +61,10 @@ void encodercallback(const std_msgs::String& encoder_msg) {
   int Left_Encoder, Right_Encoder;
 
   if (iss >> Left_Encoder >> Right_Encoder) {
-    std::cout << "Left Encoder: " << Left_Encoder << std::endl;
-    std::cout << "Right Encoder: " << Right_Encoder << std::endl;
-  } 
-  if(Right_Encoder<0){
+
+      if(Right_Encoder<0){
   Right_Encoder*=-1;
+  
   }
 
   //ROS_INFO_STREAM(current_right_encoder);
@@ -73,6 +72,10 @@ void encodercallback(const std_msgs::String& encoder_msg) {
     if(Left_Encoder<0){
     Left_Encoder*=-1;
   }
+
+  } 
+    std::cout << "Left Encoder: " << Left_Encoder << std::endl;
+    std::cout << "Right Encoder: " << Right_Encoder << std::endl;
 
   // double buff_right = (current_right_encoder-old_right_encoder)*65 ;
   // double buff_left =(current_left_encoder-old_right_encoder)*65;
@@ -319,7 +322,7 @@ int main(int argc, char **argv) {
 
   ros::NodeHandle nh;
   
-    ros::Subscriber encoder_data = nh.subscribe("encoder_data", 10, encodercallback);
+  ros::Subscriber encoder_data = nh.subscribe("encoder_data", 10, encodercallback);
   ros::Subscriber sub_action = nh.subscribe("gps_action", 10, actionCallback);
   ros::Subscriber sub_distance = nh.subscribe("gps_distance", 10, distanceCallback);
   ros::Subscriber sub = nh.subscribe("scan", 1000, lidarCallback);
@@ -372,7 +375,7 @@ usleep(15 * microsecond);
 
    // while (right_feedback < 20)
           {
-            ROS_INFO_STREAM(right_feedback);
+            ROS_INFO_STREAM("Right_feedback: "<<right_feedback);
              //ROS_INFO_STREAM(goal_action);
             msg.linear.x = 8;
             msg.linear.y = 0;
@@ -384,7 +387,7 @@ usleep(15 * microsecond);
 
             action_msg.data=4;
             action_pub.publish(action_msg);
-            ROS_INFO_STREAM("go LEFT");
+            ROS_INFO_STREAM("Turn LEFT");
             //   if (STD_range_front <= 1)
             //   {
             //     ROS_INFO("obstacle avoidnce started ");
@@ -423,7 +426,7 @@ usleep(15 * microsecond);
           if (left_feedback<turn_limit)
         /// while (left_feedback < 20)
           {
-            ROS_INFO_STREAM(left_feedback);
+            ROS_INFO_STREAM("Left_Feedback: "<<left_feedback);
              ROS_INFO_STREAM(goal_action);
             msg.linear.x = 15;
             msg.linear.y = 0;
@@ -435,7 +438,7 @@ usleep(15 * microsecond);
 
             action_msg.data=3;
             action_pub.publish(action_msg);
-            ROS_INFO_STREAM("go RIGHT");
+            ROS_INFO_STREAM("Turn RIGHT");
 
 
 
@@ -490,7 +493,7 @@ usleep(15 * microsecond);
 
         action_msg.data=1;
         action_pub.publish(action_msg);
-        ROS_INFO_STREAM("go STRAIGHT");
+        ROS_INFO_STREAM("Go STRAIGHT");
 
         
         }
@@ -551,7 +554,7 @@ usleep(15 * microsecond);
     if(feedback==0){
     if(data_recived==1)
     {
-      ROS_INFO_STREAM("feedback = %d"<<feedback);
+      ROS_INFO_STREAM("feedback = "<<feedback);
       // ROS_INFO_STREAM(feedback);
     ROS_INFO_STREAM("we are at first if");
     if(i<array_length_action){
@@ -562,26 +565,32 @@ usleep(15 * microsecond);
       goal_action = action_data_array[i];
       feedback = distance_data_array[i];//*1000;
 
-      ROS_INFO_STREAM("we came back");
-      ROS_INFO_STREAM(feedback);
-      ROS_INFO_STREAM(goal_action);
+      ROS_INFO_STREAM("feedback = "<<feedback);
+      ROS_INFO_STREAM("Action : "<<goal_action);
             if (goal_action == "turn-right") 
       {
-        ROS_INFO_STREAM("we are at third if");
+      ROS_INFO_STREAM("Action : "<<goal_action);
         right_feedback = 0 ;
      flag_turn=1;
       }
 
       else if (goal_action == "turn-left")
       {
+         ROS_INFO_STREAM("Action : "<<goal_action);
+
         left_feedback = 0 ;
-         flag_turn=1;
+        flag_turn=1;
       }
     flag_i=1;
     }
     else{
          std::string next_action = "none";
-    data_recived=0;
+         data_recived=0;
+         action_msg.data=5;
+         action_pub.publish(action_msg);
+         ROS_INFO_STREAM("Goal finished");
+         break;
+
     }
 
     }}

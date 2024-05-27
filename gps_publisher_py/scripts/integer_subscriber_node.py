@@ -11,7 +11,7 @@ left=bytes([0x4])
 stop=bytes([0x5])
 global received_integer
 received_integer=10
-ser = serial.Serial('/dev/ttyACM3', 115200)
+ser = serial.Serial('/dev/ttyACM0', 115200)
 
 def callback(data):
     """
@@ -24,7 +24,7 @@ def callback(data):
     print(received_integer)
     print(received_integer)
     
-    ser = serial.Serial('/dev/ttyACM3', 115200)
+    ser = serial.Serial('/dev/ttyACM0', 115200)
     if received_integer==1:
         # inp = ser.readline()
         # ser.close()
@@ -82,7 +82,7 @@ def main():
     while not rospy.is_shutdown():
       # out_data=ser.readline()
       # ser.close()
-      ser = serial.Serial('/dev/ttyACM3', 115200)
+      ser = serial.Serial('/dev/ttyACM0', 115200)
       out_data=ser.readline()
       msg = ByteMultiArray()
       msg.data = out_data

@@ -10,8 +10,8 @@ from serpapi import GoogleSearch
 dis=[0] * 30
 head=[0] * 30
 last = 100
-# last2 =150
-# last3 = 90
+last2 =150
+last3 = 90
 
 
 params = {
@@ -68,28 +68,28 @@ def gps_publisher():
   rate = rospy.Rate(10) # 10hz
 
   while not rospy.is_shutdown():
-    # get_trips_data()#trips_data =
-    time.sleep(2)
-    #for w, i in enumerate(dis):
-	    # if head[w] ==0:
-		  #    continue
+    get_trips_data()#trips_data =
+    # time.sleep(2)
+    for w, i in enumerate(dis):
+	    if head[w] ==0:
+		     continue
       
-	    # pub_action.publish(head[w])
-	    # pub_distance.publish(i)
+	    pub_action.publish(head[w])
+	    pub_distance.publish(i)
     # pub_action.publish("turn-right")
     # pub_distance.publish(last)
-    pub_action.publish("straight")
-    print("straight")
-    pub_distance.publish(last)
-    print(last)
-    pub_action.publish("turn-right")
-    print("turn-right")
-    pub_distance.publish(last)
-    print(last)
-    pub_action.publish("turn-left")
-    print("turn-left")
-    pub_distance.publish(last)
-    print(last)
+    # pub_action.publish("straight")
+    # print("straight")
+    # pub_distance.publish(last)
+    # print(last)
+    # pub_action.publish("turn-right")
+    # print("turn-right")
+    # pub_distance.publish(last2)
+    # print(last2)
+    # pub_action.publish("turn-left")
+    # print("turn-left")
+    # pub_distance.publish(last3)
+    # print(last3)
     pub_action.publish("done")
 	
   
