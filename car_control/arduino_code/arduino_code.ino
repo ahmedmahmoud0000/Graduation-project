@@ -14,7 +14,12 @@
 volatile int posi_left = 0; // specify posi as volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
 volatile int posi_right = 0;
 
-int inByte=0;
+int inByte = 0;
+uint8_t data_Received=0,irt=0,data_complete=0;
+uint8_t data[2]={0,0},i=0;
+
+
+//int inByte=0;
 //** Left Motor Encoder Pins ****
 #define ENCLA 3 // YELLOW
 #define ENCLB 2 // GREEN
@@ -80,6 +85,33 @@ void setup() {
 }
 
 void loop() {
+  if (Serial.available() > 0) {
+    inByte = Serial.read();
+    //Serial.print(inByte);
+    if (data_Received==1){
+        if(inByte==0x78){
+
+          data_complete=1;
+          
+          data_Received=0;
+          //cli();
+          for( i=0;i<irt;i++){
+            Serial.write(data[i]);//data[i]+
+          }
+          irt=0;
+         
+        }
+        else{
+          data[irt]=inByte;
+          //Serial.print(data[irt]);
+          irt++;
+        }
+      }
+            else if(inByte==0x7A)
+      {
+        data_Received=1;
+      }
+    }
     int pos_left = 0; 
   int pos_right = 0; 
   static unsigned long prev_imu_time = 0;
@@ -117,28 +149,28 @@ void loop() {
     Serial.print(RM_pose_cahnge);
     Serial.println();
   // put your main code here, to run repeatedly:
-  if (Serial.available() > 0) {
-    // get incoming byte:
-    inByte = Serial.read();
-     Serial.println(inByte);
-  }
+//  if (Serial.available() > 0) {
+//    // get incoming byte:
+//    inByte = Serial.read();
+//     Serial.println(inByte);
+//  }
 
-  switch (inByte) {
+  switch (data[0]) {
     case 1:  // your hand is on the sensor
       // Serial.println("forward");
-      forward(255);
+      forward(data[1]);
       break;
     case 2:  // your hand is close to the sensor
       // Serial.println("backward");
-      back(255);
+      back(data[1]);
       break;
     case 3:  // your hand is a few inches from the sensor
       // Serial.println("left");
-      left(255);
+      left(data[1]);
       break;
     case 4:  // your hand is nowhere near the sensor
       // Serial.println("right");
-      right(255);
+      right(data[1]);
       break;
     case 5:  // your hand is nowhere near the sensor
       // Serial.println("stop");
@@ -154,30 +186,30 @@ void loop() {
 
 
 void forward(int moter_speed) {
-  analogWrite(pwm_1, 250);
-  analogWrite(pwm_2, 250);
+  analogWrite(pwm_1, moter_speed);
+  analogWrite(pwm_2, moter_speed);
   digitalWrite(dir_1, HIGH);
   digitalWrite(dir_2, HIGH);
 }
 
 void back(int moter_speed) {
-  analogWrite(pwm_1, 250);
-  analogWrite(pwm_2, 250);
+  analogWrite(pwm_1, moter_speed);
+  analogWrite(pwm_2, moter_speed);
   digitalWrite(dir_1, LOW);
   digitalWrite(dir_2, LOW);
 }
 
 void right(int moter_speed) {
-  analogWrite(pwm_1, 250);
-  analogWrite(pwm_2, 250);
+  analogWrite(pwm_1, moter_speed);
+  analogWrite(pwm_2, moter_speed);
   digitalWrite(dir_1, HIGH);
   digitalWrite(dir_2, LOW);
 }
 
 void left(int moter_speed) {
 
-  analogWrite(pwm_1, 250);
-  analogWrite(pwm_2, 250);
+  analogWrite(pwm_1, moter_speed);
+  analogWrite(pwm_2, moter_speed);
   digitalWrite(dir_1, LOW);
   digitalWrite(dir_2, HIGH);
 }

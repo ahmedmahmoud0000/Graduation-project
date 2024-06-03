@@ -2,6 +2,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Int8.h>
+#include <std_msgs/Int16.h>
 #include <sensor_msgs/LaserScan.h>
 #include <std_msgs/Float32.h>
 #include <vector>
@@ -31,6 +32,7 @@
 int flag_i=0;
 int flag_turn=0;
 int stop_flag=0;
+uint8_t buf[2]={0,0};
 
  float STD_range_front ;
  float STD_range_behind;
@@ -330,14 +332,14 @@ int main(int argc, char **argv) {
   
   // ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
 
-    ros::Publisher action_pub = nh.advertise<std_msgs::Int8>("/integer_topic", 10);
+    ros::Publisher action_pub = nh.advertise<std_msgs::Int16>("/integer_topic", 10);
     
   while (ros::ok()) {
 
 unsigned int microsecond = 10000;
 usleep(15 * microsecond);
     geometry_msgs::Twist msg;
-        std_msgs::Int8 action_msg;
+        std_msgs::Int16 action_msg;
     ///ROS_INFO("main is running...");
     // std::cout<<"length_action: "<<array_length_action<<std::endl;
     // std::cout<<"length_distance: "<<array_length_distance<<std::endl;
@@ -346,8 +348,8 @@ usleep(15 * microsecond);
    
    if(data_recived==1){
 
-   //for ( i = 0; i <= array_length_action ; )
-    //{
+      //for ( i = 0; i <= array_length_action ; )
+      //{
     
       // ROS_INFO("Goal %d started ", i);
       
@@ -384,9 +386,13 @@ usleep(15 * microsecond);
             msg.angular.x = 0;
             msg.angular.y = 0;
             msg.angular.z = -1000;
-
-            action_msg.data=4;
+            buf[1]=4;
+            buf[0]=125;
+            uint16_t masg = buf[0] | buf[1] << 8;
+            action_msg.data =masg;
             action_pub.publish(action_msg);
+            // action_msg.data=4;
+            // action_pub.publish(action_msg);
             ROS_INFO_STREAM("Turn LEFT");
             //   if (STD_range_front <= 1)
             //   {
@@ -403,7 +409,7 @@ usleep(15 * microsecond);
             //       }
             //   }
 
-          //   if (next_action == "turn_left  ")
+          //   if (next_action == "turn_left")
           //     if (feedback < 2000 && STD_range_left > 10 )
           //     {
           //       ROS_INFO("Turning left ");
@@ -412,7 +418,7 @@ usleep(15 * microsecond);
           //   else if (next_action == "turn_right")
           //     if (feedback < 2000 && STD_range_right > 10)
           //     {
-          //       ROS_INFO("Turning Right ");
+          //       ROS_INFO("Turning Right");
           //       feedback = 0 ; 
           //     }
               //  pub.publish(msg);
@@ -435,9 +441,13 @@ usleep(15 * microsecond);
             msg.angular.x = 0;
             msg.angular.y = 0;
             msg.angular.z = 1000;
-
-            action_msg.data=3;
+            buf[1]=3;
+            buf[0]=150;
+            uint16_t masg = buf[0] | buf[1] << 8;
+            action_msg.data =masg;
             action_pub.publish(action_msg);
+            // action_msg.data=3;
+            
             ROS_INFO_STREAM("Turn RIGHT");
 
 
@@ -490,9 +500,13 @@ usleep(15 * microsecond);
         msg.angular.x = 0;
         msg.angular.y = 0;
         msg.angular.z = 0;
-
-        action_msg.data=1;
-        action_pub.publish(action_msg);
+        buf[1]=1;
+        buf[0]=250;
+        uint16_t masg = buf[0] | buf[1] << 8;
+        action_msg.data =masg;
+            action_pub.publish(action_msg);
+        // action_msg.data=1;
+        // action_pub.publish(action_msg);
         ROS_INFO_STREAM("Go STRAIGHT");
 
         
@@ -505,13 +519,15 @@ usleep(15 * microsecond);
           msg.angular.x = 0;
           msg.angular.y = 0;
           msg.angular.z = 0;
-
-            action_msg.data=5;
+          buf[1]=5;
+          buf[0]=0;
+          uint16_t masg = buf[0] | buf[1] << 8;
+          action_msg.data =masg;
             action_pub.publish(action_msg);
+            // action_msg.data=5;
+            // action_pub.publish(action_msg);
             ROS_INFO_STREAM("STOP");
-          
-          
-        }
+          }
 
       //   if (STD_range_front <= 1)
       //   {
@@ -586,8 +602,13 @@ usleep(15 * microsecond);
     else{
          std::string next_action = "none";
          data_recived=0;
-         action_msg.data=5;
-         action_pub.publish(action_msg);
+         buf[1]=0;
+         buf[0]=0;
+         uint16_t masg = buf[0] | buf[1] << 8;
+         action_msg.data =masg;
+            action_pub.publish(action_msg);
+        //  action_msg.data=5;
+        //  action_pub.publish(action_msg);
          ROS_INFO_STREAM("Goal finished");
          break;
 
