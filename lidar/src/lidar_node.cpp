@@ -1,35 +1,111 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/Float32MultiArray.h>
+#include <rospy_tutorials/Floats.h>
+#include <sstream>
 
-_Float32 range_front = 0 ;
-_Float32 range_behind = 0 ;
-_Float32 range_right = 0 ;
-_Float32 range_left = 0 ;
 
-std_msgs::Float32 front_msg ;
-std_msgs::Float32 behind_msg ;
-std_msgs::Float32 right_msg ;
-std_msgs::Float32 left_msg ;
+float STD_range_front,Half1_STD_range_front,Half2_STD_range_front,STD_range_behind,STD_range_right,STD_range_left,STD_avoid_right,STD_avoid_left,ahead = 1;
+std_msgs::Float32MultiArray STD_ARRAY;
+
 
 void chatterCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
 {
- range_front = scan_msg->ranges[360];
-}
+  float sum1_range_front = 0;
+  float sum2_range_front = 0;
 
-void chatter_behindCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
-{
- range_behind = scan_msg->ranges[900];
-}
+  for (int i = 0; i < 5; i++) { //for (int i = 180; i < 540; i++) {
 
-void chatter_rightCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
-{
- range_right = scan_msg->ranges[0];
-}
+    if (isinf(scan_msg->ranges[i]))
+    {
+      sum1_range_front = sum1_range_front + 1.1;
+    }
+   else  {
+   sum1_range_front = sum1_range_front + scan_msg->ranges[i];
+   }
+  }
+  Half1_STD_range_front = sum1_range_front / 5;
 
-void chatter_leftCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
-{
- range_left = scan_msg->ranges[630];
+  for (int i = 1143; i < 1148; i++) {//for (int i = 180; i < 540; i++) {
+    if (isinf(scan_msg->ranges[i]))
+    {
+      sum2_range_front = sum2_range_front + 1.1;
+    }
+   else  {
+   sum2_range_front = sum2_range_front + scan_msg->ranges[i];
+   }
+  }
+  Half2_STD_range_front = sum2_range_front / 5;
+  
+  STD_range_front=(Half1_STD_range_front+Half2_STD_range_front)/2;
+  STD_ARRAY.data[0]=STD_range_front;
+
+
+  // if (STD_range_front > 100) {
+
+  //   stop_flag = 0;
+  // } else {
+  //   stop_flag = 1;
+  // }
+
+  float sum_range_behind = 0;
+  for (int i = 569; i < 579; i++) {
+     if (isinf(scan_msg->ranges[i]))
+    {
+      sum_range_behind = sum_range_behind + 1.1;
+    }
+   else  {
+    sum_range_behind = sum_range_behind + scan_msg->ranges[i];
+  }}
+  STD_range_behind = sum_range_behind / 10;
+  STD_ARRAY.data[1]=STD_range_behind;
+
+  float sum_range_right = 0;
+  for (int i = 856; i < 866; i++) { //for (int i = 0; i < 180; i++) {
+
+         if (isinf(scan_msg->ranges[i]))
+    {
+      sum_range_right = sum_range_right + 1.1;
+    }
+   else  {
+    sum_range_right = sum_range_right + scan_msg->ranges[i];
+  }
+  }
+  STD_range_right = sum_range_right / 10;
+  STD_ARRAY.data[2]=STD_range_right;
+  
+
+  float sum_range_left = 0;
+  for (int i = 282; i < 292; i++) {
+             if (isinf(scan_msg->ranges[i]))
+    {
+      sum_range_left = sum_range_left + 1.1;
+    }
+   else  {
+    sum_range_left = sum_range_left + scan_msg->ranges[i];
+  }
+  }
+  STD_range_left = sum_range_left / 10;
+  STD_ARRAY.data[3]=STD_range_left;
+
+
+  float sum_avoid_right = 0;
+  for (int i = 999; i < 1009; i++) {
+    sum_avoid_right = sum_avoid_right + scan_msg->ranges[i];
+  }
+  STD_avoid_right = sum_avoid_right / 10;
+  STD_ARRAY.data[4]=STD_avoid_right;
+
+  float sum_avoid_left = 0;
+  for (int i = 138; i < 148; i++) {
+    sum_avoid_left = sum_avoid_left + scan_msg->ranges[i];
+  }
+  STD_avoid_left = sum_avoid_left / 10;
+  STD_ARRAY.data[5]=STD_avoid_left;
+
+  ROS_INFO_STREAM("STD_range_front: " << STD_range_front<<"  "<<"STD_range_behind: " << STD_range_behind<<"  "<<"STD_range_right: " << STD_range_right<<"  "<<"STD_range_left: " << STD_range_left);
+  // ROS_INFO_STREAM(" STD_range_behind  : " << STD_range_behind);
 }
 
 int main(int argc, char **argv)
@@ -41,41 +117,26 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(20);  
 
   ros::Publisher range_pub ;
-  ros::Publisher range_behind_pub;
-  ros::Publisher range_right_pub;
-  ros::Publisher range_left_pub;
 
 
-  range_pub= n.advertise<std_msgs::Float32>("range_front", 50);
-  range_behind_pub= n.advertise<std_msgs::Float32>("range_behind", 50); 
-  range_right_pub= n.advertise<std_msgs::Float32>("range_right", 50);
-  range_left_pub= n.advertise<std_msgs::Float32>("range_left", 50);
 
+  range_pub= n.advertise<std_msgs::Float32MultiArray>("lidar_data", 50);
 
 
   ros::Subscriber sub = n.subscribe("scan", 1000, chatterCallback);
-  ros::Subscriber sub_behind= n.subscribe("scan", 1000, chatter_behindCallback);
-  ros::Subscriber sub_right= n.subscribe("scan", 1000, chatter_rightCallback);
-  ros::Subscriber sub_left= n.subscribe("scan", 1000, chatter_leftCallback);
+
 
  while (ros::ok()) {
 
-    front_msg.data=range_front ;
-    behind_msg.data=range_behind ;
-    right_msg.data= range_right ;
-    left_msg.data= range_left ;
+    // lidar_msg.data=STD_ARRAY[] ;
 
-
-
-    range_pub.publish(front_msg);
-    range_behind_pub.publish(behind_msg);
-    range_right_pub.publish(right_msg);
-    range_left_pub.publish(left_msg);
-
+    range_pub.publish(STD_ARRAY);
+    ROS_INFO_STREAM("STD_ARRAY : "<<STD_ARRAY);
     
-  std::cout<<range_front<<"         "<<range_behind<<"         "<<range_right<<"         "<<range_left<< std::endl; 
+    
   ros::spinOnce();
   loop_rate.sleep();
  }
   return 0;
+  
 }

@@ -113,7 +113,7 @@ catkin_package(
   # serial
 )
 
-catkin_install_python(PROGRAMS scripts/gps_publisher_node.py scripts/gps_subscriber_node.py scripts/integer_subscriber_node.py
+catkin_install_python(PROGRAMS scripts/gps_publisher_node.py scripts/gps_subscriber_node.py scripts/integer_subscriber_node.py scripts/camera_data_publisher.py scripts/client_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -217,9 +217,11 @@ add_executable(control_pub src/control.cpp)  # Treat Python file as executable
 add_executable(gps_subscriber src/gps_subscriber_cpp.cpp)  # Treat Python file as executable
 add_executable(encoder_sub src/encoder_sub.cpp)  # Treat Python file as executable
 add_executable(integer_publisher_node src/integer_publisher_node.cpp)  # Treat Python file as executable
+add_executable(std_lidar src/STD_LIDAR.cpp)  # Treat Python file as executable
 
 target_link_libraries(gps_subscriber ${catkin_LIBRARIES})  # Link with Python libraries
 target_link_libraries(control_pub ${catkin_LIBRARIES})  # Link with Python libraries
 target_link_libraries(encoder_sub ${catkin_LIBRARIES})  # Link with Python libraries
 target_link_libraries(integer_publisher_node ${catkin_LIBRARIES})  # Link with Python libraries
+target_link_libraries(std_lidar ${catkin_LIBRARIES})  # Link with Python libraries
 

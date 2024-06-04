@@ -95,9 +95,9 @@ void loop() {
           
           data_Received=0;
           //cli();
-          for( i=0;i<irt;i++){
-            Serial.write(data[i]);//data[i]+
-          }
+//          for( i=0;i<irt;i++){
+//            Serial.write(data[i]);//data[i]+
+//          }
           irt=0;
          
         }

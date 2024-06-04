@@ -9,7 +9,7 @@ from serpapi import GoogleSearch
 
 dis=[0] * 30
 head=[0] * 30
-last = 100
+last = 3000
 last2 =150
 last3 = 90
 
@@ -71,11 +71,11 @@ def gps_publisher():
     get_trips_data()#trips_data =
     # time.sleep(2)
     for w, i in enumerate(dis):
-	    if head[w] ==0:
-		     continue
-      
-	    pub_action.publish(head[w])
-	    pub_distance.publish(i)
+      if head[w] ==0:
+        continue
+      i= i * 100
+      pub_action.publish(head[w])
+      pub_distance.publish(i)
     # pub_action.publish("turn-right")
     # pub_distance.publish(last)
     # pub_action.publish("straight")
