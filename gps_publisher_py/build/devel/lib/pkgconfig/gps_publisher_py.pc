@@ -1,0 +1,8 @@
+prefix=/home/mesk/Grad_ws/src/Graduation-project/gps_publisher_py/build/devel
+
+Name: gps_publisher_py
+Description: Description of gps_publisher_py
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
