@@ -33,7 +33,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg) {
     float half2_std_range_front = sum2_range_front / 5;
 
     float std_range_front = (half1_std_range_front + half2_std_range_front) / 2;
-    std_array.data[0] = std_range_front;
+    std_array.data[0] = std_range_front*100;
 
     float sum_range_behind = 0;
     for (int i = 569; i < 579; ++i) {
@@ -44,7 +44,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg) {
         }
     }
     float std_range_behind = sum_range_behind / 10;
-    std_array.data[1] = std_range_behind;
+    std_array.data[1] = std_range_behind*100;
 
     float sum_range_right = 0;
     for (int i = 856; i < 866; ++i) {
@@ -55,7 +55,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg) {
         }
     }
     float std_range_right = sum_range_right / 10;
-    std_array.data[2] = std_range_right;
+    std_array.data[2] = std_range_right*100;
 
     float sum_range_left = 0;
     for (int i = 282; i < 292; ++i) {
@@ -66,7 +66,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg) {
         }
     }
     float std_range_left = sum_range_left / 10;
-    std_array.data[3] = std_range_left;
+    std_array.data[3] = std_range_left*100;
 
     float sum_avoid_right = 0;
     for (int i = 999; i < 1009; ++i) {
@@ -77,7 +77,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg) {
         }
     }
     float std_avoid_right = sum_avoid_right / 10;
-    std_array.data[4] = std_avoid_right;
+    std_array.data[4] = std_avoid_right*100;
 
     float sum_avoid_left = 0;
     for (int i = 138; i < 148; ++i) {
@@ -88,7 +88,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg) {
         }
     }
     float std_avoid_left = sum_avoid_left / 10;
-    std_array.data[5] = std_avoid_left;
+    std_array.data[5] = std_avoid_left*100;
 
     ROS_INFO_STREAM("STD_array: ["
                     << std_array.data[0] << ", "

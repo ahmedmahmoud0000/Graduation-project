@@ -15,6 +15,9 @@ end_addr = ""
 dis = [0] * 30
 head = [0] * 30
 
+# File to store the addresses
+ADDR_FILE = "addresses.json"
+
 def get_trips_data(start_addr, end_addr):
     params = {
         "api_key": "a049341aa06153faee8cdb4bb7c951de7c5c7d0fbd3a9f071900838897f9b3dc",
@@ -71,11 +74,30 @@ def gps_publisher():
             break
         rate.sleep()
 
+def save_addresses():
+    addresses = {
+        "start_addr": start_addr,
+        "end_addr": end_addr
+    }
+    with open(ADDR_FILE, "w") as f:
+        json.dump(addresses, f)
+
+def load_addresses():
+    global start_addr, end_addr
+    try:
+        with open(ADDR_FILE, "r") as f:
+            addresses = json.load(f)
+            start_addr = addresses.get("start_addr", "")
+            end_addr = addresses.get("end_addr", "")
+    except FileNotFoundError:
+        pass
+
 def on_submit():
     global start_addr, end_addr
     start_addr = start_entry.get()
     end_addr = end_entry.get()
     if start_addr and end_addr:
+        save_addresses()
         root.quit()  # Close the Tkinter window
 
 def on_closing():
@@ -84,6 +106,9 @@ def on_closing():
     except:
         pass
     root.quit()
+
+# Load the previously entered addresses
+load_addresses()
 
 # Create the Tkinter window
 root = tk.Tk()
@@ -102,10 +127,12 @@ frame.pack(fill=tk.BOTH, expand=True)
 tk.Label(frame, text="Start Address", bg="lightblue", font=("Helvetica", 12)).grid(row=0, column=0, pady=5)
 start_entry = tk.Entry(frame, font=("Helvetica", 12))
 start_entry.grid(row=0, column=1, pady=5, padx=10)
+start_entry.insert(0, start_addr)  # Load the start address into the entry
 
 tk.Label(frame, text="End Address", bg="lightblue", font=("Helvetica", 12)).grid(row=1, column=0, pady=5)
 end_entry = tk.Entry(frame, font=("Helvetica", 12))
 end_entry.grid(row=1, column=1, pady=5, padx=10)
+end_entry.insert(0, end_addr)  # Load the end address into the entry
 
 # Create and place the submit button with an edged border
 submit_button = tk.Button(frame, text="Submit", command=on_submit, font=("Helvetica", 12), bg="green", fg="white",

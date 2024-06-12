@@ -31,7 +31,7 @@ int array_length_action = 0,array_length_distance = 0,data_recived = 0,flag_i = 
 uint8_t buf[2] = { 0, 0 },send_data=0,stop=0;
 float STD_range_front,Half1_STD_range_front,Half2_STD_range_front,STD_range_behind,STD_range_right,STD_range_left,STD_avoid_right,STD_avoid_left;
 long feedback = 0;
-int turn_limit = 100,ahead = 10;
+int turn_limit = 1000,ahead = 10;
 double right_feedback = turn_limit + 1;
 double left_feedback = turn_limit + 1;
 double right_avoid_feedback = turn_limit + 1;
@@ -80,13 +80,15 @@ void encodercallback(const std_msgs::String& encoder_msg) {
        
        Left_Encoder=stoi(left_encoder_str);
        Right_Encoder=stoi(right_encoder_str);
-       ROS_INFO_STREAM("left encoder="<<Left_Encoder);
-       ROS_INFO_STREAM("right encoder="<<Right_Encoder);
+      //  ROS_INFO_STREAM("left encoder="<<Left_Encoder);
+      //  ROS_INFO_STREAM("right encoder="<<Right_Encoder);
         // ROS_INFO_STREAM("Space found at position " << positions[0]);
         // ROS_INFO_STREAM("Carriage return found at position " << positions[1]) ;
         // ROS_INFO_STREAM("Line feed found at position " << positions[2]);
     } }else {
-        ROS_INFO_STREAM("Not all three characters were found");
+      Left_Encoder=0;
+      Right_Encoder=0;
+        // ROS_INFO_STREAM("Not all three characters were found");
     }
   
   // ROS_INFO_STREAM(recieved_encoder_data.length());
@@ -138,6 +140,7 @@ void actionCallback(const std_msgs::String::ConstPtr& msg) {
     array_length_action++;
   } else {
     data_recived = 1;
+    ROS_INFO_STREAM("done");
   }
 }
 
@@ -149,13 +152,13 @@ void distanceCallback(const std_msgs::Int32::ConstPtr& msg) {
 
 void lidarCallback(const std_msgs::Float32MultiArray::ConstPtr& msg) {
 
-    // ROS_INFO_STREAM("Received lidar data: ["
-    //                 << msg->data[0] << ", "
-    //                 << msg->data[1] << ", "
-    //                 << msg->data[2] << ", "
-    //                 << msg->data[3] << ", "
-    //                 << msg->data[4] << ", "
-    //                 << msg->data[5] << "]");
+    ROS_INFO_STREAM("Received lidar data: ["
+                    "front "<< msg->data[0] << ", "
+                    "behind"<< msg->data[1] << ", "
+                    "right"<< msg->data[2] << ", "
+                    "left"<< msg->data[3] << ", "
+                    << msg->data[4] << ", "
+                    << msg->data[5] << "]");
     STD_range_front=msg->data[0];
     STD_range_behind=msg->data[1];
     STD_range_right=msg->data[2];
@@ -302,7 +305,6 @@ ROS_INFO_STREAM("camera_reciever : STOP ");
 //         action_pub.publish(action_msg);
 // 	  goal_action = "straight";
 // }
-
 void send_serial(uint8_t buf[2],ros::Publisher action_pub){
   //buf[1] = 3;
         //buf[0] = 125;
@@ -310,6 +312,88 @@ void send_serial(uint8_t buf[2],ros::Publisher action_pub){
         action_msg.data = masg;
         action_pub.publish(action_msg);
 }
+void avoid_obstacle(ros::Publisher& action_pub) {
+    if (STD_range_front < 100) {
+        // Determine the direction to turn
+        if (STD_range_right > STD_range_left) {
+            right_avoid_feedback = 0;
+            goal_action = "avoid_right";
+            buf[1] = 3; // Command to turn right
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+
+            while (right_avoid_feedback < turn_limit) {
+                ros::spinOnce();
+                ROS_INFO_STREAM("Turning right to avoid obstacle");
+            }
+
+            // Move forward until left range is greater than 200
+            buf[1] = 1; // Command to move forward
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+           
+
+            while (STD_range_left < 200) {
+                ros::spinOnce();
+            }
+
+            // Turn back to the left
+            left_avoid_feedback = 0;
+            goal_action = "avoid_left";
+            buf[1] = 4; // Command to turn left
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+
+            while (left_avoid_feedback < turn_limit) {
+                ros::spinOnce();
+                ROS_INFO_STREAM("Turning left to resume path");
+            }
+            // Move forward until left range is greater than 200
+            buf[1] = 1; // Command to move forward
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+			 goal_action="straight";
+        } else {
+            left_avoid_feedback = 0;
+            goal_action = "avoid_left";
+            buf[1] = 4; // Command to turn left
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+
+            while (left_avoid_feedback < turn_limit) {
+                ros::spinOnce();
+                ROS_INFO_STREAM("Turning left to avoid obstacle");
+            }
+
+            // Move forward until right range is greater than 200
+            buf[1] = 1; // Command to move forward
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+
+            while (STD_range_right < 200) {
+                ros::spinOnce();
+            }
+
+            // Turn back to the right
+            right_avoid_feedback = 0;
+            goal_action = "avoid_right";
+            buf[1] = 3; // Command to turn right
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+
+            while (right_avoid_feedback < turn_limit) {
+                ros::spinOnce();
+                ROS_INFO_STREAM("Turning right to resume path");
+            }
+             buf[1] = 1; // Command to move forward
+            buf[0] = 125;
+            send_serial(buf, action_pub);
+			 goal_action="straight";
+        }
+    }
+}
+
+
 
 
 int main(int argc, char** argv) {
@@ -424,6 +508,7 @@ if((send_data==1)&&(stop==1)){
 //         buf[0] = 125;
 //           send_serial(buf,action_pub);
 // }
+avoid_obstacle(action_pub);
 if(send_data==1){
   buf[1] = dir;
           buf[0] = speed;
