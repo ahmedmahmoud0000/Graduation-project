@@ -16,6 +16,11 @@ find_package(catkin REQUIRED COMPONENTS
   # serial
   # Threads
 )
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
+
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -127,6 +132,8 @@ include_directories(
 # include
 ${PROJECT_SOURCE_DIR}/usr/include
 ${catkin_INCLUDE_DIRS}
+${GTKMM_INCLUDE_DIRS}
+
 )
 
 ## Declare a C++ library
@@ -219,7 +226,7 @@ add_executable(encoder_sub src/encoder_sub.cpp)  # Treat Python file as executab
 add_executable(integer_publisher_node src/integer_publisher_node.cpp)  # Treat Python file as executable
 add_executable(std_lidar src/STD_LIDAR.cpp)  # Treat Python file as executable
 
-target_link_libraries(gps_subscriber ${catkin_LIBRARIES})  # Link with Python libraries
+target_link_libraries(gps_subscriber ${catkin_LIBRARIES} ${GTKMM_LIBRARIES})  # Link with Python libraries
 target_link_libraries(control_pub ${catkin_LIBRARIES})  # Link with Python libraries
 target_link_libraries(encoder_sub ${catkin_LIBRARIES})  # Link with Python libraries
 target_link_libraries(integer_publisher_node ${catkin_LIBRARIES})  # Link with Python libraries

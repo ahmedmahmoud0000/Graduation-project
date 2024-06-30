@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Site BuildName="(empty)"
-	BuildStamp="20240613-0950-Experimental"
+	BuildStamp="20240620-1206-Experimental"
 	Name="MESKELKHETAM"
 	Generator="ctest-3.16.3"
 	CompilerName="/usr/bin/c++"
@@ -21,14 +21,14 @@
 	TotalVirtualMemory="6724"
 	TotalPhysicalMemory="7713"
 	LogicalProcessorsPerPhysical="2"
-	ProcessorClockFrequency="2500"
+	ProcessorClockFrequency="4200.33"
 	>
 	<Testing>
-		<StartDateTime>Jun 13 13:38 EEST</StartDateTime>
-		<StartTestTime>1718275087</StartTestTime>
+		<StartDateTime>Jun 20 15:06 EEST</StartDateTime>
+		<StartTestTime>1718885204</StartTestTime>
 		<TestList/>
-		<EndDateTime>Jun 13 13:38 EEST</EndDateTime>
-		<EndTestTime>1718275087</EndTestTime>
+		<EndDateTime>Jun 20 15:06 EEST</EndDateTime>
+		<EndTestTime>1718885204</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>

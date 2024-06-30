@@ -145,6 +145,19 @@ root.protocol("WM_DELETE_WINDOW", on_closing)
 # Run the Tkinter main loop
 root.mainloop()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 # After the Tkinter loop ends, start the ROS node
 if start_addr and end_addr:
     try:

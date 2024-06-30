@@ -37,7 +37,7 @@ double left_feedback = turn_limit + 1;
 double right_avoid_feedback = turn_limit + 1;
 double left_avoid_feedback = turn_limit + 1;
 int i = 0,avoid=0;
-int speed=150,dir=1;
+int speed=90,dir=1;
 
 
 
@@ -73,8 +73,8 @@ void encodercallback(const std_msgs::String& encoder_msg) {
             count++;
         }
     }
-      if (count == 3) {
-        if(positions[0]!=0){
+      if ((count == 3)) {
+       if(positions[0]!=0){
         std::string left_encoder_str=recieved_encoder_data.substr(0,positions[0]);
         std::string right_encoder_str=recieved_encoder_data.substr(positions[0]+1,positions[1]);
        
@@ -90,12 +90,25 @@ void encodercallback(const std_msgs::String& encoder_msg) {
       Right_Encoder=0;
         // ROS_INFO_STREAM("Not all three characters were found");
     }
+
+  ROS_INFO_STREAM(recieved_encoder_data.length());
+  std::cout << "Left Encoder: " << Left_Encoder << std::endl;
+  std::cout << "Right Encoder: " << Right_Encoder << std::endl;
+    // if (iss >> Left_Encoder >> Right_Encoder) {
+
+    if (Right_Encoder < 0) {
+      Right_Encoder *= -1;
+    }
+
+    if (Left_Encoder < 0) {
+      Left_Encoder *= -1;
+    }
   
-  // ROS_INFO_STREAM(recieved_encoder_data.length());
-  // std::cout << "Left Encoder: " << Left_Encoder << std::endl;
-  // std::cout << "Right Encoder: " << Right_Encoder << std::endl;
-  Right_Encoder *= 1;
-  Left_Encoder *= 1;
+  
+  // Right_Encoder *= -1;
+  // Left_Encoder *= 1;
+   if ( Left_Encoder< 20 && Right_Encoder<20 )
+  {
   if (goal_action == "straight") {
     if (feedback >= Right_Encoder) {
       feedback -= Right_Encoder;
@@ -130,6 +143,7 @@ void encodercallback(const std_msgs::String& encoder_msg) {
   left_avoid_feedback += Left_Encoder;  }
 
   counter++;
+}
 }
 
 void actionCallback(const std_msgs::String::ConstPtr& msg) {
@@ -186,17 +200,17 @@ send_data=1;
 }else if (str=="3")
 {
 ROS_INFO_STREAM("camera_reciever : SPEED 20 ");
-speed=100;
+speed=20;
 send_data=1;
 }else if (str=="4")
 {
 ROS_INFO_STREAM("camera_reciever : SPEED 40 ");
-speed=150;
+speed=40;
 send_data=1;
 }else if (str=="5")
 {
 ROS_INFO_STREAM("camera_reciever : SPEED 60");
-speed=250;
+speed=60;
 send_data=1;
 }else if (str=="6")
 {
@@ -313,7 +327,7 @@ void send_serial(uint8_t buf[2],ros::Publisher action_pub){
         action_pub.publish(action_msg);
 }
 void avoid_obstacle(ros::Publisher& action_pub) {
-    if (STD_range_front < 100) {
+    if (STD_range_front < 50) {
         // Determine the direction to turn
         if (STD_range_right > STD_range_left) {
             right_avoid_feedback = 0;
@@ -513,7 +527,8 @@ if(send_data==1){
   buf[1] = dir;
           buf[0] = speed;
           send_serial(buf,action_pub);
-          send_data=0;}
+          // send_data=0;
+          }
 
 if ((feedback <15000)&&(next_action=="turn-right")){
   ROS_INFO_STREAM("feedback: less and right" << feedback);
@@ -538,7 +553,7 @@ if (buf_left>20){
         ROS_INFO_STREAM("Right_feedback: " << right_feedback);
         dir = 3;
         buf[1] = 3;
-        buf[0] = 125;
+        buf[0] = speed;
         if(send_data==1){
           send_serial(buf,action_pub);
           send_data=0;}
@@ -559,7 +574,7 @@ if (buf_left>20){
         ROS_INFO_STREAM(goal_action);
         dir = 4;
         buf[1] = 4;
-        buf[0] = 150;
+        buf[0] = speed;
         if(send_data==1){
           send_serial(buf,action_pub);
           send_data=0;}
@@ -578,7 +593,7 @@ if (buf_left>20){
         // if (stop_flag == 0) {
           dir = 1;
           buf[1] = 1;
-          buf[0] = 250;
+          buf[0] = speed;
           if(send_data==1){
           send_serial(buf,action_pub);
           send_data=0;}
@@ -609,8 +624,9 @@ if (buf_left>20){
           }
           send_data=1;
           feedback = distance_data_array[i];  //*1000;
-          ROS_INFO_STREAM("feedback = " << feedback);
+          ROS_INFO_STREAM("Goal Number " << i);
           ROS_INFO_STREAM("Action : " << goal_action);
+          ROS_INFO_STREAM("Remain Distance = " << feedback);
           if (goal_action == "turn-right") {
             ROS_INFO_STREAM("Action : " << goal_action);
             right_feedback = 0;
@@ -628,7 +644,7 @@ if (buf_left>20){
           data_recived = 0;
           dir = 5;
           buf[1] = 5;
-          buf[0] = 250;
+          buf[0] = speed;
           stop=1;
           // uint16_t masg = buf[0] | buf[1] << 8;
           // action_msg.data = masg;

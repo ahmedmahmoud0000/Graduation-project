@@ -3,7 +3,7 @@ from std_msgs.msg import Int8
 import socket
 import time
 
-host="192.168.228.106"
+host="192.168."
 port=80
 def talker():
     
@@ -14,11 +14,11 @@ def talker():
         # while True:
             try:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    # hostname = socket.getfqdn()
-                    # HOST = socket.gethostbyname_ex(hostname)[2][1]
+                    hostname = socket.getfqdn()
+                    HOST = socket.gethostbyname_ex(hostname)[2][1]
                     s.connect((host, port))
                     data = s.recv(1024)
-                    # ser.write(data)
+                    ser.write(data)
                     out = list(data)
                     print(f"Received {out!r}")
                     rospy.loginfo(out)
@@ -29,7 +29,6 @@ def talker():
         
     rate.sleep()
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     #try:
         talker()
-    #ass
